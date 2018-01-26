@@ -1,10 +1,11 @@
 'use strict'
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
+
 let Events = {
     login: 0,
     db_api: 1,
-    lookup_accounts: 2,
+    get_account_by_name: 2,
     currentRequestID: 10
 }
 
@@ -80,16 +81,15 @@ function init()
         ws.jsend(request)
 
         // Lookup account by name.
-        if(typeof process.env.ACCOUNT_ID === 'undefined') {
+        if(typeof process.env.DEX_USER_ID === 'undefined') {
             request = {
-                id: Events.lookup_accounts,
+                id: Events.get_account_by_name,
                 method: "call",
                 params: [
                     process.env.DATABASE_API_ID,
-                    "lookup_accounts",
+                    "get_account_by_name",
                     [
-                        process.env.DEX_USER,
-                        1
+                        process.env.DEX_USER
                     ]
                 ]
             }
@@ -120,9 +120,10 @@ function router(data)
             log("Database API ID: " + process.env.DATABASE_API_ID, colors.fgGreen)
         break;
         
-        case Events.lookup_accounts:
-            log("good", colors.fgGreen)
-            log(data)
+        case Events.get_account_by_name:
+            log("Got account for: " + process.env.DEX_USER, colors.fgGreen)
+            // We can extract a whole lot more data about this account here
+            process.env.DEX_USER_ID = data.result.id
         break;
 
         default:
