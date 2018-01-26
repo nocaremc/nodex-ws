@@ -21,6 +21,8 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - manage margins for accounts
 - a hookable/actionable event system for all actions (eg. monitoring margins and taking action)
 - use the first public working or configured (and working) dex rpc node.
+- Structure and organization of code meeting an actually specified standard.
+-  I will not put up crap-looking code but also am not a psr-nazi. Technical standards and consistency are still important to me.
 
 
 # Libraries used
