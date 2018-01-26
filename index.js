@@ -2,10 +2,13 @@
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 
+// NOW: Okay actively setting anything in process.env is not good. handle that.
+
 let Events = {
     login: 0,
     db_api: 1,
     get_account_by_name: 2,
+    get_account_balances: 3,
     currentRequestID: 10
 }
 
@@ -37,6 +40,11 @@ function logError(error)
     log(error, colors.fgRed)
 }
 
+function logWarn(warn)
+{
+    log(warn, colors.fgYellow)
+}
+
 /* Let's begin */
 function init()
 {
@@ -54,6 +62,10 @@ function init()
         
         // Not yet sure how i'll setup this flow.
         // ws.send's callback fires before ws.message does.
+        
+        // NOW: ^ ya derp! Build the next request in the response callback
+        // for the previous request made.
+        // Bonus points if we can make use of the socket's readystates
 
         // Log in
         let request = {
@@ -62,7 +74,10 @@ function init()
             params: [
                 1,
                 "login",
-                [process.env.DEX_USER, process.env.DEX_PASS]
+                [
+                    process.env.DEX_USER,
+                    process.env.DEX_PASS
+                ]
             ]
         }
 
@@ -78,6 +93,7 @@ function init()
                 []
             ]
         }
+
         ws.jsend(request)
 
         // Lookup account by name.
@@ -93,8 +109,27 @@ function init()
                     ]
                 ]
             }
+
             ws.jsend(request)
         }
+        
+        // Now let's check on the monies
+// FIRST: we'll have to fix the flow (not async) for the retrieved
+        // DEX_USER_ID to reliably be defined at this point
+        request = {
+            id: Events.get_account_balances,
+            method: "call",
+            params: [
+                process.env.DATABASE_API_ID,
+                "get_account_balances",
+                [
+                    process.env.DEX_USER_ID,
+                    [] // flat array of asset ids
+                ]
+            ]
+        }
+
+        ws.jsend(request)
     })
 
     ws.on('message', router)
@@ -121,13 +156,19 @@ function router(data)
         break;
         
         case Events.get_account_by_name:
-            log("Got account for: " + process.env.DEX_USER, colors.fgGreen)
             // We can extract a whole lot more data about this account here
             process.env.DEX_USER_ID = data.result.id
+            log("Got account for: " + process.env.DEX_USER + ' | ' + process.env.DEX_USER_ID, colors.fgGreen)
+        break;
+
+        case Events.get_account_balances:
+            // We'll need a lookup list of these assets to know what they are.
+            // AND these values look incorrect for my account.. 0.o
+            logWarn(data.result)
         break;
 
         default:
-            log(data)
+            logWarn(data)
         break;
     }
 }

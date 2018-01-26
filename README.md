@@ -6,8 +6,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 # Things I want in this library
 
 - [x] authenticate with any account (web)
-- [ ] authenticate with other methods
-- [ ] list the balances of accounts
+- [x] list the balances of accounts
 - [ ] send money to other accounts
 - [ ] obtain a list of all assets
 - [ ] obtain a list of all asset pairs
@@ -18,6 +17,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 
 # wishlist (and maybe not belonging in this library)
 
+- [ ] authenticate with other methods
 - [ ] check the state of margins for accounts
 - [ ] manage margins for accounts
 - [ ] a hookable/actionable event system for all actions (eg. monitoring margins and taking action)
