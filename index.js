@@ -1,6 +1,10 @@
 'use strict'
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
+let Events = {
+    login: 0,
+    currentRequestID: 0
+}
 
 /**
  * Based on this bit of simple https://stackoverflow.com/a/41407246
@@ -34,32 +38,47 @@ function logError(error)
 function init()
 {
     let ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
-    ws.requestID = 0;
+    
+    // Could be something in that library that already can do this.
+    // Did not see one at a glance
+    ws.jsend = request => {
+        ws.send(JSON.stringify(request))
+    }
     
     // This promise fires sometime after/during the websocket being established
     ws.on('open', () => {
+        // ws.requestID++
         
-        // Log in our account
-        let request = JSON.stringify({
-            id: ws.requestID++,
+        // Log in
+        let request = {
+            id: Events.login,
             method: "call",
             params: [
                 1,
                 "login",
                 [process.env.USER, process.env.PASS]
             ]
-        });
+        }
 
-        ws.send(request)
-        
+        ws.jsend(request)
     })
 
-    ws.on('message', data => {
-        log(data)
-    })
+    ws.on('message', router)
 
     // Shit broke
     ws.on('error', logError)
+}
+
+function router(data)
+{
+    data = JSON.parse(data);
+    
+    switch(data.id)
+    {
+        case Events.login:
+            log('logging in')
+            break;
+    }
 }
 
 // Load environment variables
