@@ -1,11 +1,11 @@
 'use strict'
 const dotenv = require('dotenv')
-dotenv.load()
 const WebSocket = require('ws')
-const ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
 
-// Based on this bit of simple https://stackoverflow.com/a/41407246
-// LATER: create or use a logging library with colors
+/**
+ * Based on this bit of simple https://stackoverflow.com/a/41407246
+ * LATER: create or use a logging library with colors
+ */
 const colors = {
     reset: "\x1b[0m",
     fgRed: "\x1b[31m",
@@ -15,9 +15,13 @@ const colors = {
 }
 
 // Print to console log using a color. Revert color after.
-function log(error, color)
+function log(message, color)
 {
-    console.log(color, error, colors.reset)
+    if(typeof color === 'undefined') {
+        color = colors.fgWhite
+    }
+
+    console.log(color, message, colors.reset)
 }
 
 // Print given error to console in red
@@ -26,9 +30,40 @@ function logError(error)
     log(error, colors.fgRed)
 }
 
-// This promise fires sometime after/during the websocket being established
-ws.on('open', () => {})
+/* Let's begin */
+function init()
+{
+    let ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
+    ws.requestID = 0;
+    
+    // This promise fires sometime after/during the websocket being established
+    ws.on('open', () => {
+        
+        // Log in our account
+        let request = JSON.stringify({
+            id: ws.requestID++,
+            method: "call",
+            params: [
+                1,
+                "login",
+                [process.env.USER, process.env.PASS]
+            ]
+        });
 
-// Shit broke
-ws.on('error', logError)
+        ws.send(request)
+        
+    })
 
+    ws.on('message', data => {
+        log(data)
+    })
+
+    // Shit broke
+    ws.on('error', logError)
+}
+
+// Load environment variables
+dotenv.load()
+
+// Start
+init()
