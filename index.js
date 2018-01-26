@@ -76,8 +76,10 @@ function router(data)
     switch(data.id)
     {
         case Events.login:
-            log('logging in')
-            break;
+            if(data.result === true) {
+                log("Logged in", colors.fgGreen)
+            }
+        break;
     }
 }
 
