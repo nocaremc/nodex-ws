@@ -21,3 +21,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - manage margins for accounts
 - a hookable/actionable event system for all actions (eg. monitoring margins and taking action)
 - use the first public working or configured (and working) dex rpc node.
+
+
+# Libraries used
+- websockets/ws - https://github.com/websockets/ws
