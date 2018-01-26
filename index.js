@@ -1,6 +1,8 @@
 'use strict'
+const dotenv = require('dotenv')
+dotenv.load()
 const WebSocket = require('ws')
-const ws = new WebSocket('wss://la.ddexnode.net/ws', {perMessageDeflate: false})
+const ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
 
 // Based on this bit of simple https://stackoverflow.com/a/41407246
 // LATER: create or use a logging library with colors

@@ -27,3 +27,4 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 
 # Libraries used
 - websockets/ws - https://github.com/websockets/ws
+- dotenv - https://github.com/motdotla/dotenv

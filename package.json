@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/nocaremc/nodex-ws#readme",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "ws": "^4.0.0"
   }
 }
