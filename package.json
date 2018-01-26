@@ -1,0 +1,22 @@
+{
+  "name": "nodex-ws",
+  "version": "1.0.0",
+  "description": "A Node.js library for interacting with the Bitshares decentralized exchange (DEX) using websockets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nocaremc/nodex-ws.git"
+  },
+  "author": "Joshua Rodarte",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nocaremc/nodex-ws/issues"
+  },
+  "homepage": "https://github.com/nocaremc/nodex-ws#readme",
+  "dependencies": {
+    "ws": "^4.0.0"
+  }
+}
