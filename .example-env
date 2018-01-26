@@ -1,3 +1,3 @@
 RPC_NODE=wss://la.dexnode.net/ws
-USER=username
-PASS=supersecretthingstoredinplaintext
+DEX_USER=username
+DEX_PASS=supersecretthingstoredinplaintext

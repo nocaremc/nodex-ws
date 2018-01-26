@@ -3,7 +3,9 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 let Events = {
     login: 0,
-    currentRequestID: 0
+    db_api: 1,
+    lookup_accounts: 2,
+    currentRequestID: 10
 }
 
 /**
@@ -49,6 +51,9 @@ function init()
     ws.on('open', () => {
         // ws.requestID++
         
+        // Not yet sure how i'll setup this flow.
+        // ws.send's callback fires before ws.message does.
+
         // Log in
         let request = {
             id: Events.login,
@@ -56,11 +61,40 @@ function init()
             params: [
                 1,
                 "login",
-                [process.env.USER, process.env.PASS]
+                [process.env.DEX_USER, process.env.DEX_PASS]
             ]
         }
 
         ws.jsend(request)
+
+        // Request access to db api
+        request = {
+            id: Events.db_api,
+            method: "call",
+            params: [
+                1,
+                "database",
+                []
+            ]
+        }
+        ws.jsend(request)
+
+        // Lookup account by name.
+        if(typeof process.env.ACCOUNT_ID === 'undefined') {
+            request = {
+                id: Events.lookup_accounts,
+                method: "call",
+                params: [
+                    process.env.DATABASE_API_ID,
+                    "lookup_accounts",
+                    [
+                        process.env.DEX_USER,
+                        1
+                    ]
+                ]
+            }
+            ws.jsend(request)
+        }
     })
 
     ws.on('message', router)
@@ -79,6 +113,20 @@ function router(data)
             if(data.result === true) {
                 log("Logged in", colors.fgGreen)
             }
+        break;
+
+        case Events.db_api:
+            process.env.DATABASE_API_ID = data.result
+            log("Database API ID: " + process.env.DATABASE_API_ID, colors.fgGreen)
+        break;
+        
+        case Events.lookup_accounts:
+            log("good", colors.fgGreen)
+            log(data)
+        break;
+
+        default:
+            log(data)
         break;
     }
 }
