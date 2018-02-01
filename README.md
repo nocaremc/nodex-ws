@@ -11,7 +11,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [x] obtain list of specified assets
 - [ ] obtain a list of all assets
 - [ ] obtain a list of all asset pairs
-- [ ] obtain a list of asset pairs based on specified assets
+- [x] obtain a list of asset pairs based on specified assets
 - [ ] check the ticker price of any asset pair
 - [ ] check the buys and sells of any asset pair
 - [ ] check the buys and sells of accounts
