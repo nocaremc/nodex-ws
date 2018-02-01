@@ -2,3 +2,4 @@ RPC_NODE=wss://la.dexnode.net/ws
 DEX_USER=username
 DEX_PASS=supersecretthingstoredinplaintext
 #DEX_USER_ID=1.2.345678
+ASSET_SYMBOLS=["CNY", "USD", "BTS"]

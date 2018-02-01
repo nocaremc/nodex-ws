@@ -8,6 +8,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [x] authenticate with any account (web)
 - [x] list the balances of accounts
 - [ ] send money to other accounts
+- [x] obtain list of specified asset objects
 - [ ] obtain a list of all assets
 - [ ] obtain a list of all asset pairs
 - [ ] check the ticker price of any asset pair

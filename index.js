@@ -7,6 +7,7 @@ let Events = {
     db_api: 1,
     get_account_by_name: 2,
     get_account_balances: 3,
+    lookup_asset_symbols: 4,
     currentRequestID: 10
 }
 
@@ -14,17 +15,24 @@ let States = {
     login: false,
     db_api: false,
     account_id: false,
+    asset_list: false,
 }
 
 let Data = {
+    // integer|string
     db_api_id: undefined,
+    // string
     user_id: undefined,
+    // string
     user_name: undefined,
-    user_pass: undefined
+    // string
+    user_pass: undefined,
+    // array
+    asset_list: []
 }
 
 /**
- * Based on this bit of simple https://stackoverflow.com/a/41407246
+ * Based on this https://stackoverflow.com/a/41407246
  * LATER: create or use a logging library with colors
  */
 const colors = {
@@ -114,6 +122,26 @@ function update(dt)
         return;
     }
 
+    // Let's grab a list of assets we care about
+    if(!States.asset_list) {
+        request = {
+            id: Events.lookup_asset_symbols,
+            method: "call",
+            params: [
+                Data.db_api_id,
+                "lookup_asset_symbols",
+                [
+                    JSON.parse(process.env.ASSET_SYMBOLS)
+                ]
+            ]
+        }
+        ws.jsend(request)
+        return;
+    }
+
+    logError("Quitting")
+    ws.close()
+    /*
     // Check account balances
     request = {
         id: Events.get_account_balances,
@@ -128,7 +156,7 @@ function update(dt)
         ]
     }
 
-    ws.jsend(request)
+    ws.jsend(request)*/
 }
 
 /**
@@ -172,13 +200,19 @@ function router(data)
             // logWarn(data.result)
         break;
 
+        case Events.lookup_asset_symbols:
+            log("Retrieved desired assets list", colors.fgGreen)
+            Data.asset_list = data.result
+            States.asset_list = true
+        break;
+
         default:
-            logError("Unknown event given: ")
-            logWarn(data)
+            logError("Unknown event given: " + data.id)
+            logError(data)
         break;
     }
 
-    setTimeout(update, 1000)
+    setTimeout(update, 500)
 }
 
 /* Startup */
