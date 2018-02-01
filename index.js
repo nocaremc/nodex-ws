@@ -19,7 +19,10 @@ let States = {
 }
 
 let Data = {
-    db_api_id: undefined
+    db_api_id: undefined,
+    user_id: undefined,
+    user_name: undefined,
+    user_pass: undefined
 }
 
 /**
@@ -59,8 +62,10 @@ function update(dt)
 {
     let request = {}
 
+    // Log in
     if(!States.login) {
-        // Log in
+        Data.user_name = process.env.DEX_USER
+        
         request = {
             id: Events.login,
             method: "call",
@@ -68,7 +73,7 @@ function update(dt)
                 1,
                 "login",
                 [
-                    process.env.DEX_USER,
+                    Data.user_name,
                     process.env.DEX_PASS
                 ]
             ]
@@ -78,8 +83,8 @@ function update(dt)
         return;
     }
 
+    // Request access to db api
     if(!States.db_api) {
-        // Request access to db api
         request = {
             id: Events.db_api,
             method: "call",
@@ -94,6 +99,7 @@ function update(dt)
         return;
     }
 
+    // Obtain user_id for a given username
     if(!States.account_id) {
         request = {
             id: Events.get_account_by_name,
@@ -102,7 +108,7 @@ function update(dt)
                 Data.db_api_id,
                 "get_account_by_name",
                 [
-                    process.env.DEX_USER
+                    Data.user_name
                 ]
             ]
         }
@@ -118,7 +124,7 @@ function update(dt)
             Data.db_api_id,
             "get_account_balances",
             [
-                process.env.DEX_USER_ID,
+                Data.user_id,
                 [] // flat array of asset ids
             ]
         ]
@@ -127,6 +133,11 @@ function update(dt)
     ws.jsend(request)
 }
 
+/**
+ * This is function handles/routes every incoming request
+ * 
+ * @param {String} data - JSON body of incoming blah
+ */
 function router(data)
 {
     data = JSON.parse(data);
@@ -149,8 +160,8 @@ function router(data)
         break;
         
         case Events.get_account_by_name:
-            //process.env.DEX_USER_ID = data.result.id
-            log("Got account for: " + process.env.DEX_USER + ' | ' + process.env.DEX_USER_ID, colors.fgGreen)
+            Data.user_id = data.result.id
+            log("Got account for: " + Data.user_name + ' | ' + Data.user_id, colors.fgGreen)
             // We can extract a whole lot more data about this account here
             // logError(data)
             States.account_id = true
@@ -159,7 +170,7 @@ function router(data)
         case Events.get_account_balances:
             // We'll need a lookup list of these assets to know what they are.
             // AND these values look incorrect for my account.. 0.o
-            log("Got balance info for: " + process.env.DEX_USER_ID, colors.fgGreen)
+            log("Got balance info for: " + Data.user_id, colors.fgGreen)
             // logWarn(data.result)
         break;
 
