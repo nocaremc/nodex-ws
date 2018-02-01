@@ -2,8 +2,6 @@
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 
-// NOW: Okay actively setting anything in process.env is not good. handle that.
-
 let Events = {
     login: 0,
     db_api: 1,
@@ -183,17 +181,25 @@ function router(data)
     setTimeout(update, 1000)
 }
 
+/* Startup */
+
 // Load environment variables
 dotenv.load()
 
-// Start
+// Establish a connection with the given node address
 let ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
+
+// Proxy WS' send function to json-encode given data before sending
 // Could be something in that library that already can do this.
-// Did not see one at a glance
 ws.jsend = request => {
     ws.send(JSON.stringify(request))
 }
 
+// A socket connection is established
 ws.on('open', update)
+
+// A message was recieved on socket connection
 ws.on('message', router)
+
+// WS threw an error back at us
 ws.on('error', logError)
