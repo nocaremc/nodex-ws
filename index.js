@@ -74,7 +74,9 @@ function logWarn(warn)
 function makePairs(symbol, list)
 {
     return list
+        // Do not pair onself
         .filter(item => symbol !== item)
+        // get pairs
         .map(item => [symbol, item])
 }
 
@@ -223,6 +225,7 @@ function router(data)
                 return {symbol: item.symbol, id: item.id}
             })
             
+            // We'll iterate to create pairs and remove used (first) item each time
             do {
                 let symbol_pairs = makePairs(list[0], list)
                 
@@ -260,9 +263,7 @@ let ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
 
 // Proxy WS' send function to json-encode given data before sending
 // Could be something in that library that already can do this.
-ws.jsend = request => {
-    ws.send(JSON.stringify(request))
-}
+ws.jsend = request => ws.send(JSON.stringify(request))
 
 // A socket connection is established
 ws.on('open', update)
