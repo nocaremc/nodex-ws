@@ -27,8 +27,10 @@ let Data = {
     user_name: undefined,
     // string
     user_pass: undefined,
-    // array
-    asset_list: []
+    // array {asset}
+    asset_list: [],
+    // array {id, symbol}
+    asset_pairs: [],
 }
 
 /**
@@ -62,6 +64,18 @@ function logError(error)
 function logWarn(warn)
 {
     log(warn, colors.fgYellow)
+}
+
+/**
+ * Return all symbols in given list paired with given symbol
+ * @param {String} symbol 
+ * @param {Array} list 
+ */
+function makePairs(symbol, list)
+{
+    return list
+        .filter(item => symbol !== item)
+        .map(item => [symbol, item])
 }
 
 function update(dt)
@@ -181,16 +195,16 @@ function router(data)
 
         case Events.db_api:
             Data.db_api_id = data.result
-            log("Database API ID: " + Data.db_api_id, colors.fgGreen)
             States.db_api = true
+            log("Database API ID: " + Data.db_api_id, colors.fgGreen)
         break;
         
         case Events.get_account_by_name:
             Data.user_id = data.result.id
-            log("Got account for: " + Data.user_name + ' | ' + Data.user_id, colors.fgGreen)
             // We can extract a whole lot more data about this account here
             // logError(data)
             States.account_id = true
+            log("Got account for: " + Data.user_name + ' | ' + Data.user_id, colors.fgGreen)
         break;
 
         case Events.get_account_balances:
@@ -201,9 +215,30 @@ function router(data)
         break;
 
         case Events.lookup_asset_symbols:
+            Data.asset_list = data.result;
             log("Retrieved desired assets list", colors.fgGreen)
-            Data.asset_list = data.result
+
+            // Simplify asset list. We don't all the much data in pairs
+            let list = Data.asset_list.map(item => {
+                return {symbol: item.symbol, id: item.id}
+            })
+            
+            do {
+                let symbol_pairs = makePairs(list[0], list)
+                
+                if(symbol_pairs.length > 0) {
+                    Data.asset_pairs.push(symbol_pairs)
+                }
+
+                // Remove current symbol from list
+                list.splice(0, 1)
+            }
+            while (list.length > 0)
+            
+            // Flatten the array of pairs
+            Data.asset_pairs = [].concat(...Data.asset_pairs)
             States.asset_list = true
+            log("Created asset pairs", colors.fgGreen)
         break;
 
         default:
@@ -215,7 +250,7 @@ function router(data)
     setTimeout(update, 500)
 }
 
-/* Startup *
+/* Startup */
 
 // Load environment variables
 dotenv.load()
@@ -236,40 +271,4 @@ ws.on('open', update)
 ws.on('message', router)
 
 // WS threw an error back at us
-ws.on('error', logError)*/
-
-let list = ["bts", "cny", "usd", "xxx", "yyy", "zzz"]
-let newList = []
-
-/**
- * Return all symbols in given list paired with given symbol
- * @param {String} symbol 
- * @param {Array} list 
- */
-function makePairs(symbol, list)
-{
-    return list.filter(item => symbol !== item).map(item => [symbol, item])
-}
-
-
-function makeAllPairs(symbol)
-{
-    // Create pairs for given symbol
-    let pairs = makePairs(symbol, list)
-    
-    return pairs
-}
-
-do {
-    let symbol_pairs = makeAllPairs(list[0])
-    
-    if(symbol_pairs.length > 0) {
-        newList.push(symbol_pairs)
-        // Remove used symbol from list
-    }
-    list.splice(0, 1)
-} while (list.length > 0)
-
-newList = [].concat(...newList);
-
-logError(newList.length)
+ws.on('error', logError)
