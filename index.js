@@ -215,7 +215,7 @@ function router(data)
     setTimeout(update, 500)
 }
 
-/* Startup */
+/* Startup *
 
 // Load environment variables
 dotenv.load()
@@ -236,4 +236,40 @@ ws.on('open', update)
 ws.on('message', router)
 
 // WS threw an error back at us
-ws.on('error', logError)
+ws.on('error', logError)*/
+
+let list = ["bts", "cny", "usd", "xxx", "yyy", "zzz"]
+let newList = []
+
+/**
+ * Return all symbols in given list paired with given symbol
+ * @param {String} symbol 
+ * @param {Array} list 
+ */
+function makePairs(symbol, list)
+{
+    return list.filter(item => symbol !== item).map(item => [symbol, item])
+}
+
+
+function makeAllPairs(symbol)
+{
+    // Create pairs for given symbol
+    let pairs = makePairs(symbol, list)
+    
+    return pairs
+}
+
+do {
+    let symbol_pairs = makeAllPairs(list[0])
+    
+    if(symbol_pairs.length > 0) {
+        newList.push(symbol_pairs)
+        // Remove used symbol from list
+    }
+    list.splice(0, 1)
+} while (list.length > 0)
+
+newList = [].concat(...newList);
+
+logError(newList.length)

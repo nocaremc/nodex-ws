@@ -8,9 +8,10 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [x] authenticate with any account (web)
 - [x] list the balances of accounts
 - [ ] send money to other accounts
-- [x] obtain list of specified asset objects
+- [x] obtain list of specified assets
 - [ ] obtain a list of all assets
 - [ ] obtain a list of all asset pairs
+- [ ] obtain a list of asset pairs based on specified assets
 - [ ] check the ticker price of any asset pair
 - [ ] check the buys and sells of any asset pair
 - [ ] check the buys and sells of accounts
@@ -25,6 +26,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [ ] use the first public working or configured (and working) dex rpc node.
 - [ ] Structure and organization of code meeting an actually specified standard.
 - [ ]  I will not put up crap-looking code but also am not a psr-nazi. Technical standards and consistency are still important to me.
+- [ ] An interface for data storage is needed to reduce repeat calls to api for basic information
 
 
 # Libraries used
