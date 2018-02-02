@@ -13,7 +13,7 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [ ] obtain a list of all asset pairs
 - [x] obtain a list of asset pairs based on specified assets
 - [ ] check the ticker price of any asset pair
-- [ ] check the buys and sells of any asset pair
+- [x] check the limit orders of any asset pair
 - [ ] check the buys and sells of accounts
 - [ ] manage buys and sells for any asset pair
 
@@ -25,8 +25,9 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [ ] a hookable/actionable event system for all actions (eg. monitoring margins and taking action)
 - [ ] use the first public working or configured (and working) dex rpc node.
 - [ ] Structure and organization of code meeting an actually specified standard.
-- [ ]  I will not put up crap-looking code but also am not a psr-nazi. Technical standards and consistency are still important to me.
+- [ ] I will not put up crap-looking code but also am not a psr-nazi. Technical standards and consistency are still important to me.
 - [ ] An interface for data storage is needed to reduce repeat calls to api for basic information
+- [ ] Determine the price of an asset pair with a seperate base. eg: usd price of bts:cny pair
 
 
 # Libraries used

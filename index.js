@@ -8,7 +8,8 @@ let Events = {
     get_account_by_name: 2,
     get_account_balances: 3,
     lookup_asset_symbols: 4,
-    currentRequestID: 10
+    get_limit_orders: 5,
+    currentRequestID: 100
 }
 
 let States = {
@@ -31,6 +32,20 @@ let Data = {
     asset_list: [],
     // array {id, symbol}
     asset_pairs: [],
+    /* array {
+        id,
+        asset_pair_id,
+        orders: [{
+            id,
+            quantity,
+            // NOW: Just run the math for this upon collection
+            price: {
+                base: {amount, asset_id},
+                quote: {amount, asset_id}
+            }
+        }]
+    } */
+    orders: []
 }
 
 /**
@@ -78,6 +93,28 @@ function makePairs(symbol, list)
         .filter(item => symbol !== item)
         // get pairs
         .map(item => [symbol, item])
+}
+
+/**
+ * Returns true if a given order's id matches the current get_limit_order event
+ * @param {Order} item 
+ */
+function getOrderByEventID(item)
+{
+    return item.id === Events.get_limit_orders + Events.currentRequestID
+}
+
+/**
+ * Returns a subset of information in an order from rpc
+ * @param {Order Object} order 
+ */
+function mapOrderData(order)
+{
+    return {
+        id: order.id,
+        quantity: order.for_sale,
+        price: order.sell_price
+    }
 }
 
 function update(dt)
@@ -154,11 +191,42 @@ function update(dt)
         ws.jsend(request)
         return;
     }
+    
+    /* Get limit orders for an asset */
+    /* This example will get the first 20 orders for the first asset pair */
+    
+    // Our id serves as the request incrementer + event id base
+    // This is how we uniquely identify it in the router
+    Events.currentRequestID = Events.currentRequestID + 1
+    let unique_id = Events.get_limit_orders + Events.currentRequestID
+    // We'll want to referance this specific order collection later
+    Data.orders.push({id: unique_id, asset_pair_key: 0})
+    
+    request = {
+        id: unique_id,
+        method: "call",
+        params: [
+            Data.db_api_id,
+            "get_limit_orders",
+            [
+                Data.asset_pairs[0][0].id,
+                Data.asset_pairs[0][1].id,
+                20
+            ]
+        ]
+    }
+    ws.jsend(request)
+    return;
+
+    /* Send money to another account *
+    request = {
+        id: Events.
+    }*/
 
     logError("Quitting")
     ws.close()
-    /*
-    // Check account balances
+
+    /* Check account balances
     request = {
         id: Events.get_account_balances,
         method: "call",
@@ -242,15 +310,30 @@ function router(data)
             Data.asset_pairs = [].concat(...Data.asset_pairs)
             States.asset_list = true
             log("Created asset pairs", colors.fgGreen)
+            //logWarn(Data.asset_pairs)
+        break;
+        
+        // The most recent get_limit_order request response
+        case (Events.get_limit_orders + Events.currentRequestID):
+            let orders = data.result
+            Data.orders
+                // Get the order that matches this event
+                .filter(getOrderByEventID)
+                .map(item => {
+                    // Collect the desired data we want for each order
+                    item.orders = orders.map(mapOrderData)
+                })
+            log("Collected Orders for asset: " + Data.orders.filter(getOrderByEventID)[0].asset_pair_key, colors.fgGreen)
+            //logError(Data.orders[0].orders[0].price)
         break;
 
         default:
-            logError("Unknown event given: " + data.id)
+            logError("Unknown event given: " + data.id + " " + (Events.get_limit_orders + Events.currentRequestID))
             logError(data)
         break;
     }
 
-    setTimeout(update, 500)
+    setTimeout(update, 250)
 }
 
 /* Startup */
