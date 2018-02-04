@@ -1,4 +1,5 @@
 RPC_NODE=wss://la.dexnode.net/ws
+WALLET_NODE=http://127.0.0.1:8093
 DEX_USER=username
 DEX_PASS=supersecretthingstoredinplaintext
 #DEX_USER_ID=1.2.345678
