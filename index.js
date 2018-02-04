@@ -9,6 +9,7 @@ let Events = {
     get_account_balances: 3,
     lookup_asset_symbols: 4,
     get_limit_orders: 5,
+    get_ticker: 6,
     currentRequestID: 100
 }
 
@@ -192,8 +193,8 @@ function update(dt)
         return;
     }
     
-    /* Get limit orders for an asset */
-    /* This example will get the first 20 orders for the first asset pair */
+    /* Get limit orders for an asset *
+    /* This example will get the first 20 orders for the first asset pair *
     
     // Our id serves as the request incrementer + event id base
     // This is how we uniquely identify it in the router
@@ -216,12 +217,30 @@ function update(dt)
         ]
     }
     ws.jsend(request)
-    return;
+    return;*/
 
     /* Send money to another account *
     request = {
         id: Events.
     }*/
+
+    /* Get ticker price for a pair
+    Events.currentRequestID = Events.currentRequestID + 1
+    let ticker_id = Events.get_ticker + Events.currentRequestID
+    request = {
+        id: ticker_id,
+        method: "call",
+        params: [
+            Data.db_api_id,
+            "get_ticker",
+            [
+                Data.asset_pairs[0][0].id,
+                Data.asset_pairs[0][1].id,
+            ]
+        ]
+    }
+    ws.jsend(request)
+    return;*/
 
     logError("Quitting")
     ws.close()
@@ -330,6 +349,11 @@ function router(data)
             let pair = Data.asset_pairs[key]
             logError(pair[0].symbol + pair[1].symbol + ": " +(price.quote.amount/price.base.amount)*10)
             */
+        break;
+
+        // Ticker price data 
+        case (Events.get_ticker + Events.currentRequestID):
+            logWarn(data)
         break;
 
         default:
