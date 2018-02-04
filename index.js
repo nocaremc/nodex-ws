@@ -324,7 +324,12 @@ function router(data)
                     item.orders = orders.map(mapOrderData)
                 })
             log("Collected Orders for asset: " + Data.orders.filter(getOrderByEventID)[0].asset_pair_key, colors.fgGreen)
-            //logError(Data.orders[0].orders[0].price)
+            /* likely a bug on my end. Either multiply value by 10 or divide by 10
+            let price = Data.orders[0].orders[0].price
+            let key = Data.orders.filter(getOrderByEventID)[0].asset_pair_key
+            let pair = Data.asset_pairs[key]
+            logError(pair[0].symbol + pair[1].symbol + ": " +(price.quote.amount/price.base.amount)*10)
+            */
         break;
 
         default:
