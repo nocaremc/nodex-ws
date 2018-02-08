@@ -1,6 +1,7 @@
 'use strict'
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
+const request = require('request-json')
 
 let Events = {
     login: 0,
@@ -10,12 +11,14 @@ let Events = {
     lookup_asset_symbols: 4,
     get_limit_orders: 5,
     get_ticker: 6,
+    wallet_api: 7,
     currentRequestID: 100
 }
 
 let States = {
     login: false,
     db_api: false,
+    wallet_api: false,
     account_id: false,
     asset_list: false,
 }
@@ -23,6 +26,7 @@ let States = {
 let Data = {
     // integer|string
     db_api_id: undefined,
+    wallet_api_id: undefined,
     // string
     user_id: undefined,
     // string
@@ -81,6 +85,38 @@ function logWarn(warn)
 {
     log(warn, colors.fgYellow)
 }
+
+let Wallet = {
+    client: undefined,
+    request: {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "",
+        params:[]
+    },
+    init: () => {
+        Wallet.client = request.createClient(process.env.WALLET_NODE)
+    },
+    is_new: () => {
+        Wallet.set_request("is_new")
+        Wallet.client.post("/", Wallet.request, (err, res, body) => {
+            logWarn(body)
+        })
+    },
+    set_request: (method, params)  => {
+        if(typeof method === "undefined") {
+            method = ""
+        }
+        if(!Array.isArray(params) && typeof params !== "undefined") {
+            params = []
+        }
+    
+        Wallet.request.method = method
+        Wallet.request.params = params
+    }
+}
+
+
 
 /**
  * Return all symbols in given list paired with given symbol
@@ -157,6 +193,21 @@ function update(dt)
 
         ws.jsend(request)
         return;
+    }
+
+    if(!States.wallet_api) {
+        request = {
+            id: Events.wallet_api,
+            method: "call",
+            params: [
+                1,
+                "wallet",
+                []
+            ]
+        }
+
+        ws.jsend(request)
+        return
     }
 
     // Obtain user_id for a given username
@@ -287,6 +338,10 @@ function router(data)
             States.db_api = true
             log("Database API ID: " + Data.db_api_id, colors.fgGreen)
         break;
+
+        case Events.wallet_api:
+            logError(data)
+        break;
         
         case Events.get_account_by_name:
             Data.user_id = data.result.id
@@ -372,16 +427,18 @@ dotenv.load()
 
 // Establish a connection with the given node address
 let ws = new WebSocket(process.env.RPC_NODE, {perMessageDeflate: false})
-
+Wallet.init()
 // Proxy WS' send function to json-encode given data before sending
 // Could be something in that library that already can do this.
 ws.jsend = request => ws.send(JSON.stringify(request))
 
 // A socket connection is established
-ws.on('open', update)
+//ws.on('open', update)
 
 // A message was recieved on socket connection
-ws.on('message', router)
+//ws.on('message', router)
 
 // WS threw an error back at us
-ws.on('error', logError)
+//ws.on('error', logError)
+
+//Wallet.is_new()
