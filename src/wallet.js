@@ -60,9 +60,8 @@ class WalletRequest {
     }
 
     post(callback) {
-        log.warn(this.request)
-        this.client
-            .post("/", this.request)
+        //log.success(this.request)
+        this.client.post("/", this.request)
             .then(callback)
             .catch(log.error)
     }
@@ -73,7 +72,7 @@ class Wallet {
      * Properties
      * 
      * client
-     * request
+     * events: EventEmitter
      * 
      */
     constructor(address) {
@@ -85,6 +84,7 @@ class Wallet {
             client: new WalletRequest(address),
             events: new EventEmitter()
         })
+
         this.is_new()
     }
 
@@ -95,7 +95,44 @@ class Wallet {
     is_new() {
         this.client.method = "is_new"
         this.client.post((result) => {
-            this.emit("wallet::is_new", result)
+            if(result.body.result === true) {
+                log.warn("wallet_cli is new. Create a password")
+                //this.client.reset()
+                this.emit("is_new", result)
+
+            } else if(result.body.result === false) {
+                log.success("wallet exists, use it")
+                this.emit("init")
+            } else {
+                log.error("Could not determine is_new status of wallet")
+            }
+        })
+    }
+
+    set_password(password) {
+        this.client.method = "set_password"
+        this.client.params = [password]
+        this.client.post((result) => {
+            log.error(result)
+            this.emit("init")
+        })
+    }
+
+    unlock(password) {
+        this.client.method = "unlock"
+        this.client.params = [password]
+        this.client.post((result) => {
+            log.error("unlocked?")
+            this.emit("unlocked")
+        })
+    }
+
+    import_key(account, wif_key) {
+        this.client.method = "import_key"
+        this.client.params = [account, wif_key]
+        this.client.post((result) => {
+            log.warn("importing account")
+            log.error(result)
         })
     }
 

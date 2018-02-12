@@ -1,14 +1,30 @@
 const dotenv = require('dotenv')
-const log = require('./log.js')
-const Wallet = require('./wallet.js')
+const log = require('./src/log.js')
+const Wallet = require('./src/wallet.js')
 
 // Load environment variables
 dotenv.load()
 
-log.success('We have logged some shit!')
 let wallet = new Wallet(process.env.WALLET_NODE)
 
-wallet.on("wallet::is_new", (result) => {
-    // wallet is new
+// This wallet is new, let's set it up
+// You will need a password set before anything else can be done
+wallet.on("is_new", result => {
+    log.info('new')
+    wallet.set_password(process.env.WALLET_PASS)
 })
 
+// We've detected that a password has been set
+// unlock wallet before proceeding
+wallet.on('init', () => {
+    log.info('wallet init')
+    wallet.unlock(process.env.WALLET_PASS)
+})
+
+wallet.on('unlocked', () => {
+
+    // Determine if our target account exists in the wallet already
+
+    // It is not until this point a wallet.json file is created by wallet_cli
+    wallet.import_key(process.env.DEX_USER, process.env.DEX_WIF)
+})
