@@ -17,19 +17,19 @@ class Log {
     }
 
     static info(message) {
-        this.log(message)
+        Log.log(message)
     }
 
     static warn(message) {
-        this.log(message, colors.fgYellow)
+        Log.log(message, colors.fgYellow)
     }
 
     static error(message) {
-        this.log(message, colors.fgRed)
+        Log.log(message, colors.fgRed)
     }
 
     static success(message) {
-        this.log(message, colors.fgGreen)
+        Log.log(message, colors.fgGreen)
     }
 }
 
