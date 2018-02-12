@@ -54,6 +54,11 @@ class WalletRequest {
         }
     }
 
+    prepare(method, params) {
+        this.method = method
+        this.params = params
+    }
+
     reset() {
         this.method("")
         this.params([])
@@ -64,6 +69,24 @@ class WalletRequest {
         this.client.post("/", this.request)
             .then(callback)
             .catch(log.error)
+    }
+
+    static isOk(result) {
+        return result.res.statusCode === 200 
+            && result.res.statusMessage === "OK"
+    }
+
+    static isTrue(result) {
+        return result.body.result === true
+    }
+    
+    static isFalse(result) {
+        return result.body.result === false
+    }
+
+    /* Result is a 200 OK with a returned value of true */
+    static passes(result) {
+        return WalletRequest.isOk(result) && WalletRequest.isTrue(result)
     }
 }
 
@@ -94,15 +117,16 @@ class Wallet {
 
     is_new() {
         this.client.method = "is_new"
+        
         this.client.post((result) => {
-            if(result.body.result === true) {
-                log.warn("wallet_cli is new. Create a password")
-                //this.client.reset()
+            if(WalletRequest.passes(result)) {
+                log.warn("Wallet is new.")
                 this.emit("is_new", result)
 
-            } else if(result.body.result === false) {
-                log.success("wallet exists, use it")
+            } else if(WalletRequest.isFalse(result)) {
+                log.success("Wallet is not new.")
                 this.emit("init")
+
             } else {
                 log.error("Could not determine is_new status of wallet")
             }
@@ -110,29 +134,33 @@ class Wallet {
     }
 
     set_password(password) {
-        this.client.method = "set_password"
-        this.client.params = [password]
+        this.client.prepare("set_password", [password])
         this.client.post((result) => {
-            log.error(result)
-            this.emit("init")
+            if(WalletRequest.isOK(result)) {
+                log.success("Wallet password has been set.")
+                this.emit("init")
+            } else {
+                log.error("Something went wrong in set_password")
+            }
         })
     }
 
     unlock(password) {
-        this.client.method = "unlock"
-        this.client.params = [password]
+        this.client.prepare("unlock", [password])
         this.client.post((result) => {
-            log.error("unlocked?")
-            this.emit("unlocked")
+            if(WalletRequest.isOk(result)) {
+                log.success("Wallet unlocked.")
+                this.emit("unlocked")
+            }
         })
     }
 
     import_key(account, wif_key) {
-        this.client.method = "import_key"
-        this.client.params = [account, wif_key]
+        this.client.prepare("import_key", [account, wif_key])
         this.client.post((result) => {
-            log.warn("importing account")
-            log.error(result)
+            if(WalletRequest.passes(result)) {
+                log.success("Imported WIF key for account: " + account + ".")
+            }
         })
     }
 

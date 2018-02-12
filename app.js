@@ -10,14 +10,12 @@ let wallet = new Wallet(process.env.WALLET_NODE)
 // This wallet is new, let's set it up
 // You will need a password set before anything else can be done
 wallet.on("is_new", result => {
-    log.info('new')
     wallet.set_password(process.env.WALLET_PASS)
 })
 
 // We've detected that a password has been set
 // unlock wallet before proceeding
 wallet.on('init', () => {
-    log.info('wallet init')
     wallet.unlock(process.env.WALLET_PASS)
 })
 
