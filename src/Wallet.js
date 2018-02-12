@@ -21,7 +21,7 @@ class Wallet {
             client: new WalletRequest(address),
             events: new EventEmitter()
         })
-        
+
         this.is_new()
     }
 
@@ -50,7 +50,7 @@ class Wallet {
     set_password(password) {
         this.client.prepare("set_password", [password])
         this.client.post((result) => {
-            if(WalletRequest.isOK(result)) {
+            if(WalletRequest.isOk(result)) {
                 log.success("Wallet password has been set.")
                 this.emit("init")
             } else {

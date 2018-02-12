@@ -67,7 +67,20 @@ class WalletRequest {
         //log.success(this.request)
         this.client.post("/", this.request)
             .then(callback)
-            .catch(log.error)
+            .catch(this.error)
+    }
+
+    error(error) {
+        switch(error.code) {
+            case "ECONNREFUSED":
+                log.error("Could not connect to wallet at '" 
+                    + error.address + ":" + error.port + "'")
+            break
+
+            default:
+                log.error(error)
+            break
+        }
     }
 
     static isOk(result) {
