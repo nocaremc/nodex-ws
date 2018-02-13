@@ -3,6 +3,9 @@ const log = require('./Log.js')
 
 let map = new WeakMap()
 
+/** 
+ * Implement some checks to prevent blind failures
+*/
 class WalletRequest {
     constructor(address) {
         map.set(this, {

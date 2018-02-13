@@ -1,8 +1,6 @@
 nodex-ws will be a Node.js + Websockets library for the bitshares dex allowing developers who do not want to use python to jump into writing trading applications.
 Disclaimer: Nobody has taught me node or websockets. Should be some ugly fun but that is why we iterate.
 
-While I do want to learn, I'm writing this on fumes. R&D on my end will be limited to just getting things to a functional state.
-
 # Things I want in this library
 
 - [x] authenticate with any account (web)
@@ -25,10 +23,8 @@ While I do want to learn, I'm writing this on fumes. R&D on my end will be limit
 - [ ] a hookable/actionable event system for all actions (eg. monitoring margins and taking action)
 - [ ] use the first public working or configured (and working) dex rpc node.
 - [ ] Structure and organization of code meeting an actually specified standard.
-- [ ] I will not put up crap-looking code but also am not a psr-nazi. Technical standards and consistency are still important to me.
 - [ ] An interface for data storage is needed to reduce repeat calls to api for basic information
 - [ ] Determine the price of an asset pair with a seperate base. eg: usd price of bts:cny pair
-
 
 # Libraries used
 - websockets/ws - https://github.com/websockets/ws
