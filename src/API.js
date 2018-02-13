@@ -1,3 +1,4 @@
+const log = require('./Log.js')
 let map = new WeakMap()
 
 /**
@@ -9,9 +10,11 @@ class API {
         map.set(this, {
             connection: connection
         })
-        this.login_api_id = 1
+        API.login_api_id = 1
         // Maybe we should centralize these so they don't collide?
-        this.loginRequestID = 1
+        API.loginRequestID = 1
+
+        connection.on("message", this.message)
     }
 
     /**
@@ -23,8 +26,8 @@ class API {
         // Build a login request
         let request = map.get(this).connection
             .buildRequest(
-                this.login_api_id,
-                this.loginRequestID,
+                API.login_api_id,
+                API.loginRequestID,
                 "login",
                 [
                     user,
@@ -33,6 +36,24 @@ class API {
             )
         // send it
         map.get(this).connection.send(request)
+    }
+
+    message(data) {
+        data = JSON.parse(data)
+        switch(data.id) {
+
+            case API.loginRequestID:
+                if(data.result === true) {
+                    log.success("Logged in")
+                } else {
+                    log.error("Unable to log in")
+                }
+            break;
+
+            default:
+                // don't care here
+            break;
+        }
     }
     
     /*
