@@ -1,6 +1,5 @@
 const dotenv = require('dotenv')
 const log = require('./src/Log.js')
-const Wallet = require('./src/Wallet.js')
 const API = require('./src/API.js')
 // Load environment variables
 dotenv.load()
@@ -13,6 +12,7 @@ let api = new API(process.env.RPC_NODE, {perMessageDeflate: false})
 api.on("open", () => {
     log.success("Websocket ready")
     api.login(process.env.DEX_USER, process.env.DEX_PASS)
+    api.database()
 })
 
 api.on("message", data => {

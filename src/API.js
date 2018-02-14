@@ -1,5 +1,6 @@
 const log = require('./Log.js')
 const Connection = require('./Connection.js')
+const Wallet = require('./Wallet.js')
 const EventEmitter = require('events').EventEmitter
 
 let map = new WeakMap()
@@ -13,8 +14,10 @@ class API {
         map.set(this, {
             connection: new Connection(node_url, options),
             events: new EventEmitter(),
+            
             login_api_id: 1,
             database_api_id: undefined,
+            
             loginRequestID: 1,
             databaseRequestID: 2
         })
@@ -51,8 +54,8 @@ class API {
     database() {
         let request = map.get(this).connection
             .buildRequest(
+                map.get(this).login_api_id,
                 map.get(this).databaseRequestID,
-                map.get(this).loginRequestID,
                 "database",
                 []
             )
@@ -67,9 +70,18 @@ class API {
 
             case map.get(this).loginRequestID:
                 if(data.result === true) {
-                    log.success("Logged in")
+                    log.success("Logged in.")
                 } else {
-                    log.error("Unable to log in")
+                    log.error("Unable to log in.")
+                }
+            break;
+
+            case map.get(this).databaseRequestID:
+                if(typeof data.result !== "undefined") {
+                    log.success("Got Database API ID: " + data.result)
+                    map.get(this).database_api_id = data.result
+                } else {
+                    log.error("Unable to obtain Database API ID.")
                 }
             break;
 
