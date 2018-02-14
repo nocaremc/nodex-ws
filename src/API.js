@@ -1,4 +1,7 @@
 const log = require('./Log.js')
+const Connection = require('./Connection.js')
+const EventEmitter = require('events').EventEmitter
+
 let map = new WeakMap()
 
 /**
@@ -6,15 +9,22 @@ let map = new WeakMap()
  * Further reading: http://docs.bitshares.org/api/access.html
  */
 class API {
-    constructor(connection) {
+    constructor(node_url, options) {
         map.set(this, {
-            connection: connection
+            connection: new Connection(node_url, options),
+            events: new EventEmitter(),
+            login_api_id: 1,
+            database_api_id: undefined,
+            loginRequestID: 1,
+            databaseRequestID: 2
         })
-        API.login_api_id = 1
-        // Maybe we should centralize these so they don't collide?
-        API.loginRequestID = 1
 
-        connection.on("message", this.message)
+        map.get(this).connection.on("message", (data) => {
+            this.message(data)
+        })
+        map.get(this).connection.on("open", () => {
+            this.emit("open")
+        })
     }
 
     /**
@@ -26,8 +36,8 @@ class API {
         // Build a login request
         let request = map.get(this).connection
             .buildRequest(
-                API.login_api_id,
-                API.loginRequestID,
+                map.get(this).login_api_id,
+                map.get(this).loginRequestID,
                 "login",
                 [
                     user,
@@ -38,11 +48,24 @@ class API {
         map.get(this).connection.send(request)
     }
 
+    database() {
+        let request = map.get(this).connection
+            .buildRequest(
+                map.get(this).databaseRequestID,
+                map.get(this).loginRequestID,
+                "database",
+                []
+            )
+
+        map.get(this).connection.send(request)
+    }
+
     message(data) {
         data = JSON.parse(data)
+        
         switch(data.id) {
 
-            case API.loginRequestID:
+            case map.get(this).loginRequestID:
                 if(data.result === true) {
                     log.success("Logged in")
                 } else {
@@ -51,15 +74,23 @@ class API {
             break;
 
             default:
-                // don't care here
+                this.emit("message", data)
             break;
         }
+    }
+
+    on(event, callback) {
+        map.get(this).events.on(event, callback)
+    }
+
+    emit(event, data) {
+        map.get(this).events.emit(event, data)
     }
     
     /*
     block() {}
     network_broadcast() {}
-    database() {}
+    
     history() {}
     network_node() {}
     crypto() {}
