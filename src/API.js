@@ -1,5 +1,6 @@
 const log = require('./Log.js')
 const Connection = require('./Connection.js')
+const Database = require('./Database.js')
 const Wallet = require('./Wallet.js')
 const EventEmitter = require('events').EventEmitter
 
@@ -16,7 +17,7 @@ class API {
             events: new EventEmitter(),
             
             login_api_id: 1,
-            database_api_id: undefined,
+            database: undefined,
             
             loginRequestID: 1,
             databaseRequestID: 2
@@ -51,6 +52,20 @@ class API {
         map.get(this).connection.send(request)
     }
 
+    /**
+     * Return instance of Database API or false
+     */
+    get database_api() {
+        let db = map.get(this).database
+        
+        if(typeof db !== 'undefined') {
+            return db
+        }
+
+        log.error("Database API has not been initialized with call to API.database()")
+        return false
+    }
+
     database() {
         let request = map.get(this).connection
             .buildRequest(
@@ -79,7 +94,12 @@ class API {
             case map.get(this).databaseRequestID:
                 if(typeof data.result !== "undefined") {
                     log.success("Got Database API ID: " + data.result)
-                    map.get(this).database_api_id = data.result
+                    map.get(this).database = new Database(
+                        data.result,
+                        map.get(this).connection,
+                        map.get(this).events
+                    )
+                    this.emit("database_api", map.get(this).database)
                 } else {
                     log.error("Unable to obtain Database API ID.")
                 }

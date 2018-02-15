@@ -1,11 +1,50 @@
+const log = require('./Log.js')
+
+let map = new WeakMap()
+
 /* Further reading: http://docs.bitshares.org/api/database.html */
 class Database {
     
+    constructor(api_id, connection, eventEmitter) {
+        map.set(this, {
+            api_id: api_id,
+            connection: connection,
+            events: eventEmitter,
+            // These can be scoped into a range unique to this api
+            // api_id + range + id
+            // eh
+            event_ids: {
+                get_account_by_name: api_id + 1000 + 1
+            }
+        })
+
+        map.get(this).connection.on("message", (data) => {
+            this.message(data)
+        })
+    }
+
+    /**
+     * Return the instance id for this api
+     */
+    get apiID() {
+        return map.get(this).api_id
+    }
+
     /**
      * describe me
      * @param {string} name 
      */
-    get_account_by_name(name) {}
+    get_account_by_name(name) {
+        let request = map.get(this).connection
+        .buildRequest(
+            this.apiID,
+            map.get(this).event_ids.get_account_by_name,
+            "get_account_by_name",
+            [name]
+        )
+
+        map.get(this).connection.send(request)
+    }
     
     /**
      * Get a list of assets using a list of symbols
@@ -41,6 +80,20 @@ class Database {
      */
     get_account_balances(account_id, assets) {
 
+    }
+
+    message(data) {
+        data = JSON.parse(data)
+        log.warn(data.id)
+        switch(data.id) {}
+    }
+
+    on(event, callback) {
+        map.get(this).events.on(event, callback)
+    }
+
+    emit(event, data) {
+        map.get(this).events.emit(event, data)
     }
 }
 
