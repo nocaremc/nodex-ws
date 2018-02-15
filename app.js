@@ -18,8 +18,24 @@ api.on("open", () => {
     // before attempting to use it. hmm... management layer needed?
     api.on("database_api", (database) => {
         log.success("Database initialized")
+        
         // Obtain user_id for a given username
-        api.database_api.get_account_by_name(process.env.DEX_USER)
+        //api.database_api.get_account_by_name(process.env.DEX_USER)
+        
+        // Let's grab a list of assets we care about
+        //api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
+
+        // Grab limit orders for bts:cny (unsure on base/quote)
+        //api.database_api.get_limit_orders('1.3.0', '1.3.113', 20)
+
+        // Grab ticker price for bts:cny
+        //api.database_api.get_ticker('1.3.0', '1.3.113')
+
+        // Get account balance for cny and usd
+        api.database_api.get_account_balances(
+            process.env.DEX_USER_ID, 
+            ['1.3.0', '1.3.113']
+        )
     })
 })
 
@@ -27,9 +43,8 @@ api.on("message", data => {
     log.success(data)
 })
 
-//this.ws.on('open', this.open)
-//this.ws.on('message', this.message)
-//this.ws.on('error', log.error)
+// How might be best to sanely close connection?
+
 /*
 let wallet = new Wallet(process.env.WALLET_NODE)
 
