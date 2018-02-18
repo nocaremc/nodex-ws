@@ -37,19 +37,15 @@ class API {
      * @param {string} password 
      */
     login(user, password) {
-        // Build a login request
-        let request = map.get(this).connection
-            .buildRequest(
-                map.get(this).login_api_id,
-                map.get(this).loginRequestID,
-                "login",
-                [
-                    user,
-                    password
-                ]
-            )
-        // send it
-        map.get(this).connection.send(request)
+        map.get(this).connection.request(
+            map.get(this).login_api_id,
+            map.get(this).loginRequestID,
+            "login",
+            [
+                user,
+                password
+            ]
+        )
     }
 
     /**
@@ -67,15 +63,12 @@ class API {
     }
 
     database() {
-        let request = map.get(this).connection
-            .buildRequest(
-                map.get(this).login_api_id,
-                map.get(this).databaseRequestID,
-                "database",
-                []
-            )
-
-        map.get(this).connection.send(request)
+        map.get(this).connection.request(
+            map.get(this).login_api_id,
+            map.get(this).databaseRequestID,
+            "database",
+            []
+        )
     }
 
     message(data) {
