@@ -113,6 +113,10 @@ class API {
         return map.get(this).storage.getAsset(key)
     }
 
+    getAssets(keys) {
+        return map.get(this).storage.getAssets(keys)
+    }
+
     on(event, callback) {
         map.get(this).events.on(event, callback)
     }

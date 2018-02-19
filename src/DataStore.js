@@ -25,21 +25,45 @@ class DataStore {
         return map.get(this).assets
     }
 
+    /**
+     * Get an Asset by key
+     * @param {string} key Asset symbol or ID
+     * @return Asset | false
+     */
     getAsset(key) {
-        if(this.assetsMap.has(key)) {
+        if(key) {
+            if(this.assetsMap.has(key)) {
 
-            let asset_id = this.assetsMap.get(key)
-            
-            if(this.assets.has(asset_id)) {
-                return this.assets.get(asset_id)
+                let asset_id = this.assetsMap.get(key)
+                
+                if(this.assets.has(asset_id)) {
+                    return this.assets.get(asset_id)
+                } else {
+                    log.error("Could not find asset with asset_id: " + asset_id)
+                }
             } else {
-                log.error("Could not find asset with asset_id: " + asset_id)
+                log.error("Could not find asset with key: " + key)
             }
         } else {
-            log.error("Could not find asset with key: " + key)
+            log.error("Key in getAsset undefined")
         }
 
         return false
+    }
+
+    /**
+     * Get Assets corresponding to keys array
+     * @param {Array} keys array containing asset symbols and/or IDs
+     * 
+     * @return Array of Assets or false
+     */
+    getAssets(keys) {
+        if(!Array.isArray(keys)) {
+            log.error("keys in getAssets MUST be an array")
+            return false
+        }
+
+        return keys.map(key => this.getAsset(key))
     }
 
     storeAssets(data) {
@@ -52,9 +76,9 @@ class DataStore {
                 this.assetsMap.set(asset.id, asset.id)
                 this.assetsMap.set(asset.symbol, asset.id)
                 this.assets.set(asset.id, asset)
-                this.emit('store.assets.stored')
             }
         })
+        this.emit('store.assets.stored')
     }
 
     on(event, callback) {

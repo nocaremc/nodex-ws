@@ -76,7 +76,6 @@ class Database {
      * @param {array} symbols 
      */
     lookup_asset_symbols(symbols) {
-        log.info(map.get(this).storage.getAsset('CNY'))
         // We could/should check local asset collection first.
         // Then we could build and emit a replica locally
         map.get(this).connection.request(
@@ -157,6 +156,7 @@ class Database {
             break;
 
             case events.get_assets:
+                //log.warn(data.result)
                 this.emit('store.assets', data.result)
             break;
         }
