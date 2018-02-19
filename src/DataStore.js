@@ -4,6 +4,7 @@ const Asset = require('./graphene/Asset.js')
 let map = new WeakMap()
 
 class DataStore {
+
     constructor(eventEmitter) {
         map.set(this, {
             assetsMap: new Dict(),
@@ -16,11 +17,16 @@ class DataStore {
         })
     }
 
-
+    /**
+     * @return assets map collection
+     */
     get assetsMap() {
         return map.get(this).assetsMap
     }
 
+    /**
+     * @return assets collection
+     */
     get assets() {
         return map.get(this).assets
     }
@@ -66,6 +72,10 @@ class DataStore {
         return keys.map(key => this.getAsset(key))
     }
 
+    /**
+     * 
+     * @param {array} data array of asset objects (literals only?)
+     */
     storeAssets(data) {
         log.info('Adding/updating some assets')
         // Iterate assets. If key does not exist, store it.
@@ -73,18 +83,33 @@ class DataStore {
             asset = Object.assign(new Asset, asset)
             // Check if asset id or symbol is mapped
             if(!this.assetsMap.has(asset.id) && !this.assetsMap.has(asset.symbol)) {
+                // Store potential keys in asset map
                 this.assetsMap.set(asset.id, asset.id)
                 this.assetsMap.set(asset.symbol, asset.id)
+                
+                // Store asset
                 this.assets.set(asset.id, asset)
             }
         })
+
+        // Notify 
         this.emit('store.assets.stored')
     }
 
+    /**
+     * Attach an event to EventEmitter 
+     * @param {string} event event name
+     * @param {function} callback 
+     */
     on(event, callback) {
         map.get(this).events.on(event, callback)
     }
 
+    /**
+     * Emit an event using EventEmitter
+     * @param {string} event event name
+     * @param {anything} data 
+     */
     emit(event, data) {
         map.get(this).events.emit(event, data)
     }

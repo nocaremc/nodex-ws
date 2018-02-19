@@ -12,6 +12,11 @@ let map = new WeakMap()
  * Further reading: http://docs.bitshares.org/api/access.html
  */
 class API {
+
+    /**
+     * @param {string} node_url websocket RPC node url
+     * @param {object} options WebSocket options
+     */
     constructor(node_url, options) {
         map.set(this, {
             connection: new Connection(node_url, options),
@@ -53,7 +58,7 @@ class API {
     }
 
     /**
-     * Return instance of Database API or false
+     * @return instance of Database API or false
      */
     get database_api() {
         let db = map.get(this).database
@@ -66,6 +71,9 @@ class API {
         return false
     }
 
+    /**
+     * Request access to the Database API
+     */
     database() {
         map.get(this).connection.request(
             map.get(this).login_api_id,
@@ -75,6 +83,10 @@ class API {
         )
     }
 
+    /**
+     * Handles incoming websocket responses
+     * @param {string} data response data as JSON string
+     */
     message(data) {
         data = JSON.parse(data)
         
@@ -102,25 +114,28 @@ class API {
                     log.error("Unable to obtain Database API ID.")
                 }
             break;
-
+            
+            // Emit the event data allowing the event to bubble up
             default:
                 this.emit("message", data)
             break;
         }
     }
 
-    getAsset(key) {
-        return map.get(this).storage.getAsset(key)
-    }
-
-    getAssets(keys) {
-        return map.get(this).storage.getAssets(keys)
-    }
-
+    /**
+     * Attach an event to EventEmitter 
+     * @param {string} event event name
+     * @param {function} callback 
+     */
     on(event, callback) {
         map.get(this).events.on(event, callback)
     }
 
+    /**
+     * Emit an event using EventEmitter
+     * @param {string} event event name
+     * @param {anything} data 
+     */
     emit(event, data) {
         map.get(this).events.emit(event, data)
     }
@@ -136,6 +151,19 @@ class API {
     debug() {}
     enable_api() {}
     */
+
+    // These return locally stored data that was retrieved via Graphene
+    // Not yet sure what context it belongs
+
+    /** @see DataStore::getAsset */
+    getAsset(key) {
+        return map.get(this).storage.getAsset(key)
+    }
+
+    /** @see Datastore::getAssets */
+    getAssets(keys) {
+        return map.get(this).storage.getAssets(keys)
+    }
 }
 
 module.exports = API

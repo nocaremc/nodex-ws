@@ -5,8 +5,8 @@ let map = new WeakMap()
 
 /* Further reading: http://docs.bitshares.org/api/database.html */
 class Database {
+    
     /**
-     * 
      * @param {integer} api_id 
      * @param {Connection} connection 
      * @param {EventEmitter} eventEmitter 
@@ -31,13 +31,12 @@ class Database {
             },
         })
 
-        map.get(this).connection.on("message", (data) => {
-            this.message(data)
-        })
+        // Handle incoming websocket messages in this class
+        map.get(this).connection.on("message", data => this.message(data))
     }
 
     /**
-     * Return the instance id for this api
+     * Return the API ID given for this instance
      */
     get apiID() {
         return map.get(this).api_id
@@ -146,6 +145,10 @@ class Database {
         )
     }
 
+    /**
+     * Handles incoming websocket responses related to database api
+     * @param {string} data response data as JSON string
+     */
     message(data) {
         data = JSON.parse(data)
         let events = map.get(this).event_ids
@@ -162,10 +165,20 @@ class Database {
         }
     }
 
+    /**
+     * Attach an event to EventEmitter 
+     * @param {string} event event name
+     * @param {function} callback 
+     */
     on(event, callback) {
         map.get(this).events.on(event, callback)
     }
 
+    /**
+     * Emit an event using EventEmitter
+     * @param {string} event event name
+     * @param {anything} data 
+     */
     emit(event, data) {
         map.get(this).events.emit(event, data)
     }
