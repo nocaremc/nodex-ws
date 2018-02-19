@@ -25,8 +25,11 @@ Disclaimer: Nobody has taught me node or websockets. Should be some ugly fun but
 - [ ] Structure and organization of code meeting an actually specified standard.
 - [ ] An interface for data storage is needed to reduce repeat calls to api for basic information
 - [ ] Determine the price of an asset pair with a seperate base. eg: usd price of bts:cny pair
+- [ ] Changes or a sister library will be required to use this directly on websites
 
 # Libraries used
+
 - websockets/ws - https://github.com/websockets/ws
 - dotenv - https://github.com/motdotla/dotenv
 - request-json - https://github.com/cozy/request-json
+- collections - https://github.com/montagejs/collections
