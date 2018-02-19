@@ -2,6 +2,7 @@ const log = require('./Log.js')
 const Connection = require('./Connection.js')
 const Database = require('./Database.js')
 const Wallet = require('./Wallet.js')
+const DataStore = require('./DataStore.js')
 const EventEmitter = require('events').EventEmitter
 
 let map = new WeakMap()
@@ -20,7 +21,8 @@ class API {
             database: undefined,
             
             loginRequestID: 1,
-            databaseRequestID: 2
+            databaseRequestID: 2,
+            
         })
 
         map.get(this).connection.on("message", (data) => {
@@ -29,6 +31,8 @@ class API {
         map.get(this).connection.on("open", () => {
             this.emit("open")
         })
+
+        map.get(this).storage = new DataStore(map.get(this).events)
     }
 
     /**
@@ -90,7 +94,8 @@ class API {
                     map.get(this).database = new Database(
                         data.result,
                         map.get(this).connection,
-                        map.get(this).events
+                        map.get(this).events,
+                        map.get(this).storage
                     )
                     this.emit("database_api", map.get(this).database)
                 } else {
@@ -102,6 +107,10 @@ class API {
                 this.emit("message", data)
             break;
         }
+    }
+
+    getAsset(key) {
+        return map.get(this).storage.getAsset(key)
     }
 
     on(event, callback) {

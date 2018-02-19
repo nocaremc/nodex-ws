@@ -1,15 +1,23 @@
 const log = require('./Log.js')
-const Balances = require('./Balances.js')
+//const Balances = require('./graphene/Balances.js')
+const Asset = require('./graphene/Asset.js')
 let map = new WeakMap()
 
 /* Further reading: http://docs.bitshares.org/api/database.html */
 class Database {
-    
-    constructor(api_id, connection, eventEmitter) {
+    /**
+     * 
+     * @param {integer} api_id 
+     * @param {Connection} connection 
+     * @param {EventEmitter} eventEmitter 
+     * @param {DataStore} storage 
+     */
+    constructor(api_id, connection, eventEmitter, storage) {
         map.set(this, {
             api_id: api_id,
             connection: connection,
             events: eventEmitter,
+            storage: storage,
             // These can be scoped into a range unique to this api
             // api_id + range + id
             // eh, could be something wiser in place
@@ -20,7 +28,7 @@ class Database {
                 get_limit_orders: 1000 + 4,
                 get_ticker: 1000 + 5,
                 get_account_balances: 1000 + 6,
-            }
+            },
         })
 
         map.get(this).connection.on("message", (data) => {
@@ -36,7 +44,7 @@ class Database {
     }
 
     /**
-     * describe me
+     * Return an account object by username
      * @param {string} name 
      */
     get_account_by_name(name) {
@@ -67,7 +75,10 @@ class Database {
      * Get a list of assets using a list of symbols
      * @param {array} symbols 
      */
-    lookup_asset_symbols(symbols){
+    lookup_asset_symbols(symbols) {
+        log.info(map.get(this).storage.getAsset('CNY'))
+        // We could/should check local asset collection first.
+        // Then we could build and emit a replica locally
         map.get(this).connection.request(
             this.apiID,
             map.get(this).event_ids.lookup_asset_symbols,
@@ -142,7 +153,11 @@ class Database {
 
         switch(data.id) {
             case events.get_account_balances:
-                let x = new Balances(data.result)
+                //let x = new Balances(data.result)
+            break;
+
+            case events.get_assets:
+                this.emit('store.assets', data.result)
             break;
         }
     }

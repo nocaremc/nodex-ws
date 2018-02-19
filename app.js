@@ -32,15 +32,27 @@ api.on("open", () => {
         //api.database_api.get_ticker('1.3.0', '1.3.113')
 
         // Get account balance for cny and usd
-        api.database_api.get_account_balances(
+        /*api.database_api.get_account_balances(
             process.env.DEX_USER_ID, 
             ['1.3.0', '1.3.113']
-        )
+        )*/
+
+        api.database_api.get_assets(['1.3.113', '1.3.0'])
     })
 })
 
+// Doing something with assets after knowing they exist
+api.on('store.assets.stored',() => {
+    //log.warn(api.getAsset('CNY'))
+    api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
+})
+
 api.on("message", data => {
-    log.success(data)
+    if(data.id === 1005) {
+        //log.error(data)
+    } else {
+        //log.warn(data)
+    }
 })
 
 // How might be best to sanely close connection?
