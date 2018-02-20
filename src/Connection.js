@@ -40,6 +40,8 @@ class Connection extends WebSocket {
         let request = this.buildRequest(api_id, request_id, method, params)
         this.send(request)
     }
+
+    // LATER: heartbeat, node list, switching
 }
 
 module.exports = Connection

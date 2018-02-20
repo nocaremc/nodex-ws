@@ -33,3 +33,8 @@ Disclaimer: Nobody has taught me node or websockets. Should be some ugly fun but
 - dotenv - https://github.com/motdotla/dotenv
 - request-json - https://github.com/cozy/request-json
 - collections - https://github.com/montagejs/collections
+
+# Development Libraries
+
+- Mocha - https://github.com/mochajs/mocha
+- Chai - https://github.com/chaijs/chai

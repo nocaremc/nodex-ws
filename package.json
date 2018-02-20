@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A Node.js library for interacting with the Bitshares decentralized exchange (DEX) using websockets",
   "main": "index.js",
+  "directories": {
+    "test": "test",
+    "src": "src"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --use_strict",
     "start": "node app.js --use_strict"
   },
   "repository": {
@@ -23,5 +27,8 @@
     "request-json": "^0.6.2",
     "ws": "^4.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.1"
+  }
 }
