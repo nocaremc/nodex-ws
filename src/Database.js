@@ -13,6 +13,9 @@ class Database {
      * @param {DataStore} storage 
      */
     constructor(api_id, connection, eventEmitter, storage) {
+        let api_event_id = 1000
+        let event_id = api_event_id + 0
+
         map.set(this, {
             api_id: api_id,
             connection: connection,
@@ -22,14 +25,16 @@ class Database {
             // api_id + range + id
             // eh, could be something wiser in place
             event_ids: {
-                get_account_by_name: 1000 + 1,
-                lookup_asset_symbols: 1000 + 2,
-                get_assets: 1000 + 3,
-                get_limit_orders: 1000 + 4,
-                get_ticker: 1000 + 5,
-                get_account_balances: 1000 + 6,
+                get_account_by_name: event_id++,
+                lookup_asset_symbols: event_id++,
+                get_assets: event_id++,
+                get_limit_orders: event_id++,
+                get_ticker: event_id++,
+                get_account_balances: event_id++,
             },
         })
+
+        //log.error(map.get(this).event_ids)
 
         // Handle incoming websocket messages in this class
         map.get(this).connection.on("message", data => this.message(data))
