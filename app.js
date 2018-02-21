@@ -1,43 +1,38 @@
 /*
  I'm doing little more than scratching out examples as I go along in this file
 */
-
 const dotenv = require('dotenv')
 const log = require('./src/Log.js')
 const API = require('./src/API.js')
 // Load environment variables
 dotenv.load()
 
-
-
+// Instantiate api, connecting to rpc node
 let api = new API(process.env.RPC_NODE, {perMessageDeflate: false})
 
-//
 api.on("open", () => {
     log.success("Websocket ready")
     api.login(process.env.DEX_USER, process.env.DEX_PASS, result => {
         //log.info("login was " + result)
     })
-    api.database((database) => {
+    api.database(database => {
     
     // Here we'll wait for the db api to be initialized
     
         log.success("Database initialized")
         
         // Obtain user_id for a given username
-        
-        
-        // api.database_api.get_account_by_name(process.env.DEX_USER, (result) => {
+        // api.database_api.get_account_by_name(process.env.DEX_USER, result => {
         //     log.warn(result)
         // })
         
         // Let's grab a list of assets we care about
-        // api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS, (result) => {
+        // api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS, result => {
         //     log.warn(result)
         // })
 
         // Grab limit orders for bts:cny (unsure on base/quote)
-        // api.database_api.get_limit_orders('1.3.0', '1.3.113', 20, (result) => {
+        // api.database_api.get_limit_orders('1.3.0', '1.3.113', 20, result => {
         //     log.warn(result)
         // })
 
@@ -55,8 +50,18 @@ api.on("open", () => {
         //     }
         // )
 
-        api.database_api.get_assets(['1.3.113', '1.3.0'], (assets) => {
+        //api.database_api.get_assets(['1.3.113', '1.3.0'], assets => {
             //log.error(assets)
+        //})
+        
+        // Get some random objects
+        // api.database_api.get_objects(["2.4.21","2.4.83"], objects => {
+        //     log.warn(objects)
+        // })
+        
+        // Get block header
+        api.database_api.get_block_header(24614236, block_header => {
+            log.warn(block_header)
         })
     })
 })

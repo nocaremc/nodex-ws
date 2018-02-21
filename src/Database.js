@@ -25,6 +25,13 @@ class Database {
             // api_id + range + id
             // eh, could be something wiser in place
             event_ids: {
+                // Objects
+                get_objects: event_id++,
+
+                // Blocks and transactions
+                get_block_header: event_id++,
+
+
                 get_account_by_name: event_id++,
                 lookup_asset_symbols: event_id++,
                 get_assets: event_id++,
@@ -40,16 +47,9 @@ class Database {
         map.get(this).connection.on("message", data => this.message(data))
     }
 
-    /**
-     * Return the API ID given for this instance
-     */
-    get apiID() {
-        return map.get(this).api_id
-    }
-
     /*
     - Objects
-    get_objects(ids)
+    #get_objects(ids)
 
     - Subscriptions
     set_subscribe_callback(callback(variant), notify_remove_create)
@@ -58,7 +58,7 @@ class Database {
     cancel_all_subscriptions()
 
     - Blocks and transactions
-    get_block_header(block_num)
+    #get_block_header(block_num)
     get_block_header_batch(block_nums)
     get_block(block_num)
     get_transaction(block_num, trx_in_block)
@@ -145,18 +145,68 @@ class Database {
     - Blinded balances
     get_blinded_balances(commitments) ???
 
-
+this.connection.request(
+    this.apiD,
+    this.event_ids.,
+    "",
+    []
+)
+if(typeof callback !== 'undefined') {
+    this.once("db.", callback)
+}
     */
 
+    /*********
+     * Objects
+     */
+
+    /**
+     * Get objects for ids
+     * @param {array} ids array of object ids
+     * @param {function} callback 
+     */
+    get_objects(ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_objects,
+            "get_objects",
+            [ids]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_objects", callback)
+        }
+    }
+
+    /*************************
+     * Blocks and transactions
+     */
+
+    /**
+     * Get a block header
+     * @param {integer} block_num block id
+     * @param {function} callback 
+     */
+    get_block_header(block_num, callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_block_header,
+            "get_block_header",
+            [block_num]
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_block_header", callback)
+        }
+    }
     /**
      * Return an account object by username
      * @param {string} name account name
      * @param {function} callback 
      */
     get_account_by_name(name, callback) {
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.get_account_by_name,
+            this.event_ids.get_account_by_name,
             "get_account_by_name",
             [name]
         )
@@ -172,9 +222,9 @@ class Database {
      * @param {function} callback 
      */
     get_assets(asset_ids, callback) {
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.get_assets,
+            this.event_ids.get_assets,
             "get_assets",
             [
                 asset_ids
@@ -194,9 +244,9 @@ class Database {
     lookup_asset_symbols(symbols, callback) {
         // We could/should check local asset collection first.
         // Then we could build and emit a replica locally
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.lookup_asset_symbols,
+            this.event_ids.lookup_asset_symbols,
             "lookup_asset_symbols",
             [
                 JSON.parse(symbols)
@@ -220,9 +270,9 @@ class Database {
             limit = 20
         }
 
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.get_limit_orders,
+            this.event_ids.get_limit_orders,
             "get_limit_orders",
             [
                 asset_id_a,
@@ -243,9 +293,9 @@ class Database {
      * @param {function} callback 
      */
     get_ticker(asset_id_base, asset_id_quote, callback) {
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.get_ticker,
+            this.event_ids.get_ticker,
             "get_ticker",
             [
                 asset_id_base,
@@ -266,9 +316,9 @@ class Database {
      */
     get_account_balances(account_id, assets, callback) {
         // LATER: error check asset ids... as a start
-        map.get(this).connection.request(
+        this.connection.request(
             this.apiID,
-            map.get(this).event_ids.get_account_balances,
+            this.event_ids.get_account_balances,
             "get_account_balances",
             [
                 account_id,
@@ -290,6 +340,17 @@ class Database {
         let events = map.get(this).event_ids
 
         switch(data.id) {
+
+            /* Objects */
+            case events.get_objects:
+                this.emit("db.get_objects", data.result)
+            break;
+
+            /* Blocks and transactions */
+            case events.get_block_header:
+                this.emit("db.get_block_header", data.result)
+            break;
+
             case events.get_account_balances:
                 //let x = new Balances(data.result)
                 this.emit("db.get_account_balances", data.result)
@@ -306,7 +367,6 @@ class Database {
                 this.emit('store.assets', data.result)
             break;
 
-
             case events.get_account_by_name:
                 this.emit("db.get_account_by_name", data.result)
             break;
@@ -322,9 +382,28 @@ class Database {
             case events.get_ticker:
                 this.emit("db.get_ticker", data.result)
             break;
-
-
         }
+    }
+
+    /**
+     * @return {Connection} Connection instance
+     */
+    get connection() {
+        return map.get(this).connection
+    }
+
+    /**
+     * @return {object} event_ids
+     */
+    get event_ids() {
+        return map.get(this).event_ids
+    }
+
+    /**
+     * @return {integer} the API ID given for this instance
+     */
+    get apiID() {
+        return map.get(this).api_id
     }
 
     /**
