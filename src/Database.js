@@ -44,22 +44,28 @@ class Database {
 
     /**
      * Return an account object by username
-     * @param {string} name 
+     * @param {string} name account name
+     * @param {function} callback 
      */
-    get_account_by_name(name) {
+    get_account_by_name(name, callback) {
         map.get(this).connection.request(
             this.apiID,
             map.get(this).event_ids.get_account_by_name,
             "get_account_by_name",
             [name]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_account_by_name", callback)
+        }
     }
 
     /**
      * Return a list of assets by asset_ids
      * @param {Array} asset_ids 
+     * @param {function} callback 
      */
-    get_assets(asset_ids) {
+    get_assets(asset_ids, callback) {
         map.get(this).connection.request(
             this.apiID,
             map.get(this).event_ids.get_assets,
@@ -68,13 +74,18 @@ class Database {
                 asset_ids
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_assets", callback)
+        }
     }
     
     /**
      * Get a list of assets using a list of symbols
-     * @param {array} symbols 
+     * @param {array} symbols array asset symbol names
+     * @param {function} callback 
      */
-    lookup_asset_symbols(symbols) {
+    lookup_asset_symbols(symbols, callback) {
         // We could/should check local asset collection first.
         // Then we could build and emit a replica locally
         map.get(this).connection.request(
@@ -85,6 +96,10 @@ class Database {
                 JSON.parse(symbols)
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_asset_symbols", callback)
+        }
     }
 
     /**
@@ -92,8 +107,9 @@ class Database {
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
      * @param {int} limit - Maximum of 100, Default 20
+     * @param {function} callback 
      */
-    get_limit_orders(asset_id_a, asset_id_b, limit) {
+    get_limit_orders(asset_id_a, asset_id_b, limit, callback) {
         if(typeof limit === 'undefined') {
             limit = 20
         }
@@ -108,14 +124,19 @@ class Database {
                 limit
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_limit_orders", callback)
+        }
     }
 
     /**
      * Get the ticker price for asset pair
      * @param {string} asset_id_base 
      * @param {string} asset_id_quote 
+     * @param {function} callback 
      */
-    get_ticker(asset_id_base, asset_id_quote) {
+    get_ticker(asset_id_base, asset_id_quote, callback) {
         map.get(this).connection.request(
             this.apiID,
             map.get(this).event_ids.get_ticker,
@@ -125,14 +146,19 @@ class Database {
                 asset_id_quote
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_ticker", callback)
+        }
     }
 
     /**
      * Check account balances
      * @param {string} account_id 
      * @param {array} assets - asset ids
+     * @param {function} callback 
      */
-    get_account_balances(account_id, assets) {
+    get_account_balances(account_id, assets, callback) {
         // LATER: error check asset ids... as a start
         map.get(this).connection.request(
             this.apiID,
@@ -143,6 +169,10 @@ class Database {
                 assets
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_account_balances", callback)
+        }
     }
 
     /**
@@ -156,12 +186,32 @@ class Database {
         switch(data.id) {
             case events.get_account_balances:
                 //let x = new Balances(data.result)
+                this.emit("db.get_account_balances", data.result)
             break;
 
             case events.get_assets:
                 //log.warn(data.result)
                 this.emit('store.assets', data.result)
             break;
+
+
+            case events.get_account_by_name:
+                this.emit("db.get_account_by_name", data.result)
+            break;
+
+            case events.lookup_asset_symbols:
+                this.emit("db.lookup_asset_symbols", data.result)
+            break;
+
+            case events.get_limit_orders:
+                this.emit("db.get_limit_orders", data.result)
+            break;
+
+            case events.get_ticker:
+                this.emit("db.get_ticker", data.result)
+            break;
+
+
         }
     }
 
@@ -172,6 +222,15 @@ class Database {
      */
     on(event, callback) {
         map.get(this).events.on(event, callback)
+    }
+
+    /**
+     * Attach a event to EventEmitter to be fired only once
+     * @param {string} event event name
+     * @param {function} callback 
+     */
+    once(event, callback) {
+        map.get(this).events.once(event, callback)
     }
 
     /**

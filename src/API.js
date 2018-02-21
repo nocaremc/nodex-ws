@@ -28,6 +28,7 @@ class API {
             loginRequestID: 1,
             databaseRequestID: 2,
             
+            authenticated: false
         })
 
         map.get(this).connection.on("message", (data) => {
@@ -40,12 +41,17 @@ class API {
         map.get(this).storage = new DataStore(map.get(this).events)
     }
 
+    authenticated() {
+        return map.get(this).authenticated
+    }
+
     /**
      * Authenticate to the RPC server.
      * @param {string} user 
      * @param {string} password 
+     * @param {function} callback 
      */
-    login(user, password) {
+    login(user, password, callback) {
         map.get(this).connection.request(
             map.get(this).login_api_id,
             map.get(this).loginRequestID,
@@ -55,6 +61,10 @@ class API {
                 password
             ]
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("api.login", callback)
+        }
     }
 
     /**
@@ -73,14 +83,19 @@ class API {
 
     /**
      * Request access to the Database API
+     * @param {function} callback 
      */
-    database() {
+    database(callback) {
         map.get(this).connection.request(
             map.get(this).login_api_id,
             map.get(this).databaseRequestID,
             "database",
             []
         )
+
+        if(typeof callback !== 'undefined') {
+            this.once("api.database_api", callback)
+        }
     }
 
     /**
@@ -95,6 +110,9 @@ class API {
             case map.get(this).loginRequestID:
                 if(data.result === true) {
                     log.success("Logged in.")
+                    // Unsure if this will stick around
+                    map.get(this).authenticated = true
+                    this.emit("api.login", data.result)
                 } else {
                     log.error("Unable to log in.")
                 }
@@ -109,7 +127,7 @@ class API {
                         map.get(this).events,
                         map.get(this).storage
                     )
-                    this.emit("database_api", map.get(this).database)
+                    this.emit("api.database_api", map.get(this).database)
                 } else {
                     log.error("Unable to obtain Database API ID.")
                 }
@@ -129,6 +147,15 @@ class API {
      */
     on(event, callback) {
         map.get(this).events.on(event, callback)
+    }
+
+    /**
+     * Attach a event to EventEmitter to be fired only once
+     * @param {string} event event name
+     * @param {function} callback 
+     */
+    once(event, callback) {
+        map.get(this).events.once(event, callback)
     }
 
     /**

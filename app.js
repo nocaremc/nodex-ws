@@ -1,3 +1,7 @@
+/*
+ I'm doing little more than scratching out examples as I go along in this file
+*/
+
 const dotenv = require('dotenv')
 const log = require('./src/Log.js')
 const API = require('./src/API.js')
@@ -11,40 +15,58 @@ let api = new API(process.env.RPC_NODE, {perMessageDeflate: false})
 //
 api.on("open", () => {
     log.success("Websocket ready")
-    api.login(process.env.DEX_USER, process.env.DEX_PASS)
-    api.database()
+    api.login(process.env.DEX_USER, process.env.DEX_PASS, result => {
+        //log.info("login was " + result)
+    })
+    api.database((database) => {
     
     // Here we'll wait for the db api to be initialized
-    // before attempting to use it. hmm... management layer needed?
-    api.on("database_api", (database) => {
+    
         log.success("Database initialized")
         
         // Obtain user_id for a given username
-        //api.database_api.get_account_by_name(process.env.DEX_USER)
+        
+        
+        // api.database_api.get_account_by_name(process.env.DEX_USER, (result) => {
+        //     log.warn(result)
+        // })
         
         // Let's grab a list of assets we care about
-        //api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
+        // api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS, (result) => {
+        //     log.warn(result)
+        // })
 
         // Grab limit orders for bts:cny (unsure on base/quote)
-        //api.database_api.get_limit_orders('1.3.0', '1.3.113', 20)
+        // api.database_api.get_limit_orders('1.3.0', '1.3.113', 20, (result) => {
+        //     log.warn(result)
+        // })
 
         // Grab ticker price for bts:cny
-        //api.database_api.get_ticker('1.3.0', '1.3.113')
+        api.database_api.get_ticker('1.3.0', '1.3.113', result => {
+            log.warn(result)
+        })
 
         // Get account balance for cny and usd
-        /*api.database_api.get_account_balances(
-            process.env.DEX_USER_ID, 
-            ['1.3.0', '1.3.113']
-        )*/
+        // api.database_api.get_account_balances(
+        //     process.env.DEX_USER_ID,
+        //     ['1.3.0', '1.3.113'],
+        //     result => {
+        //         log.warn(result)
+        //     }
+        // )
 
-        api.database_api.get_assets(['1.3.113', '1.3.0'])
+        //api.database_api.get_assets(['1.3.113', '1.3.0'])
     })
 })
-
+let x = false
 // Doing something with assets after knowing they exist
 api.on('store.assets.stored',() => {
+    if(!x) {
+        //log.warn(api.getAssets(['CNY', 'BTS']))
+        x = true
+    }
     //log.warn(api.getAsset('CNY'))
-    api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
+    //api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
 })
 
 api.on("message", data => {
