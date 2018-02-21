@@ -60,9 +60,25 @@ api.on("open", () => {
         // })
         
         // Get block header
-        api.database_api.get_block_header(24614236, block_header => {
-            log.warn(block_header)
+        // api.database_api.get_block_header(24614236, block_header => {
+        //     log.warn(block_header)
+        // })
+
+        // Get block's headers
+        // api.database_api.get_block_header_batch([24614236, 24614695], block_headers => {
+        //     log.warn(block_headers)
+        // })
+
+        // Get block
+        // api.database_api.get_block(24614236, block => {
+        //     log.warn(block)
+        // })
+
+        // Get a transaction from a block
+        api.database_api.get_transaction(24614807, 1, transaction => {
+            log.warn(transaction)
         })
+
     })
 })
 let x = false

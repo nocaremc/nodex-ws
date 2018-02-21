@@ -3,6 +3,15 @@ const log = require('./Log.js')
 const Asset = require('./graphene/Asset.js')
 let map = new WeakMap()
 
+function createEventIds(api_event_id, seed, events) {
+    let ids = {}
+    events.map(name => {
+        ids[name] = api_event_id + seed++
+    })
+
+    return ids
+}
+
 /* Further reading: http://docs.bitshares.org/api/database.html */
 class Database {
     
@@ -14,7 +23,7 @@ class Database {
      */
     constructor(api_id, connection, eventEmitter, storage) {
         let api_event_id = 1000
-        let event_id = api_event_id + 0
+        let api_event_seed = 0
 
         map.set(this, {
             api_id: api_id,
@@ -24,21 +33,26 @@ class Database {
             // These can be scoped into a range unique to this api
             // api_id + range + id
             // eh, could be something wiser in place
-            event_ids: {
-                // Objects
-                get_objects: event_id++,
+            event_ids: createEventIds(
+                api_event_id,
+                api_event_seed,
+                [
+                    // Objects
+                    'get_objects',
+                    // Blocks and transactions
+                    'get_block_header',
+                    'get_block_header_batch',
+                    'get_block',
+                    'get_transaction',
 
-                // Blocks and transactions
-                get_block_header: event_id++,
-
-
-                get_account_by_name: event_id++,
-                lookup_asset_symbols: event_id++,
-                get_assets: event_id++,
-                get_limit_orders: event_id++,
-                get_ticker: event_id++,
-                get_account_balances: event_id++,
-            },
+                    'get_account_by_name',
+                    'lookup_asset_symbols',
+                    'get_assets',
+                    'get_limit_orders',
+                    'get_ticker',
+                    'get_account_balances',
+                ]
+            )
         })
 
         //log.error(map.get(this).event_ids)
@@ -47,21 +61,14 @@ class Database {
         map.get(this).connection.on("message", data => this.message(data))
     }
 
-    /*
-    - Objects
-    #get_objects(ids)
+    
 
+    /*
     - Subscriptions
     set_subscribe_callback(callback(variant), notify_remove_create)
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Blocks and transactions
-    #get_block_header(block_num)
-    get_block_header_batch(block_nums)
-    get_block(block_num)
-    get_transaction(block_num, trx_in_block)
 
     - Globals
     get_chain_properties()
@@ -156,9 +163,9 @@ if(typeof callback !== 'undefined') {
 }
     */
 
-    /*********
-     * Objects
-     */
+    //
+    // Objects
+    //
 
     /**
      * Get objects for ids
@@ -178,9 +185,9 @@ if(typeof callback !== 'undefined') {
         }
     }
 
-    /*************************
-     * Blocks and transactions
-     */
+    //
+    // Blocks and transactions
+    //
 
     /**
      * Get a block header
@@ -194,10 +201,70 @@ if(typeof callback !== 'undefined') {
             "get_block_header",
             [block_num]
         )
+
         if(typeof callback !== 'undefined') {
             this.once("db.get_block_header", callback)
         }
     }
+
+    /**
+     * Get multiple block's headers
+     * @param {array} block_nums array of block ids
+     * @param {function} callback 
+     */
+    get_block_header_batch(block_nums, callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_block_header_batch,
+            "get_block_header_batch",
+            [block_nums]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_block_header_batch", callback)
+        }
+    }
+
+    /**
+     * Get a block by its id
+     * @param {integer} block_num block id
+     * @param {function} callback 
+     */
+    get_block(block_num, callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_block,
+            "get_block",
+            [block_num]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_block", callback)
+        }
+    }
+
+    /**
+     * Get a specific transaction from a block
+     * @param {integer} block_num block id
+     * @param {integer} transaction_id signed transaction id in given block id
+     * @param {function} callback 
+     */
+    get_transaction(block_num, transaction_id, callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_transaction,
+            "get_transaction",
+            [
+                block_num,
+                transaction_id
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_transaction", callback)
+        }
+    }
+
     /**
      * Return an account object by username
      * @param {string} name account name
@@ -350,6 +417,23 @@ if(typeof callback !== 'undefined') {
             case events.get_block_header:
                 this.emit("db.get_block_header", data.result)
             break;
+
+            case events.get_block_header_batch:
+                this.emit("db.get_block_header_batch", data.result)
+            break;
+
+            case events.get_block:
+                this.emit("db.get_block", data.result)
+            break;
+
+            case events.get_transaction:
+                if(data.error) {
+                    log.error(data.error.message)
+                }
+                this.emit("db.get_transaction", data.result)
+            break;
+
+
 
             case events.get_account_balances:
                 //let x = new Balances(data.result)
