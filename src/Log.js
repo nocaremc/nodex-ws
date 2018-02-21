@@ -7,6 +7,8 @@ const colors = {
     fgWhite: "\x1b[37m"
 }
 
+
+// LATER: A setting dictating which functions output (loglevel) would be nice
 class Log {
     static log(message, color) {
         if(!color) {

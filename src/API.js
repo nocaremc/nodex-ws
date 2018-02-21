@@ -183,12 +183,12 @@ class API {
     // Not yet sure what context it belongs
 
     /** @see DataStore::getAsset */
-    getAsset(key) {
+    getStoredAsset(key) {
         return map.get(this).storage.getAsset(key)
     }
 
     /** @see Datastore::getAssets */
-    getAssets(keys) {
+    getStoredAssets(keys) {
         return map.get(this).storage.getAssets(keys)
     }
 }

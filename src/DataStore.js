@@ -79,7 +79,7 @@ class DataStore {
     storeAssets(data) {
         log.info('Adding/updating some assets')
         // Iterate assets. If key does not exist, store it.
-        data.map((asset) => {
+        let saved_assets = data.map((asset) => {
             asset = Object.assign(new Asset, asset)
             // Check if asset id or symbol is mapped
             if(!this.assetsMap.has(asset.id) && !this.assetsMap.has(asset.symbol)) {
@@ -90,10 +90,11 @@ class DataStore {
                 // Store asset
                 this.assets.set(asset.id, asset)
             }
+            return asset
         })
-
+        
         // Notify 
-        this.emit('store.assets.stored')
+        this.emit('store.assets.stored', saved_assets)
     }
 
     /**

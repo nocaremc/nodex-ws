@@ -190,7 +190,13 @@ class Database {
             break;
 
             case events.get_assets:
-                //log.warn(data.result)
+                // After assets have been stored, we'll pass the stored assets
+                // back to get_assets
+                this.once('store.assets.stored', (assets) => {
+                    this.emit('db.get_assets', assets)
+                })
+
+                // Store retrieved assets
                 this.emit('store.assets', data.result)
             break;
 

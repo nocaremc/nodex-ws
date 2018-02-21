@@ -42,9 +42,9 @@ api.on("open", () => {
         // })
 
         // Grab ticker price for bts:cny
-        api.database_api.get_ticker('1.3.0', '1.3.113', result => {
-            log.warn(result)
-        })
+        // api.database_api.get_ticker('1.3.0', '1.3.113', result => {
+        //     log.warn(result)
+        // })
 
         // Get account balance for cny and usd
         // api.database_api.get_account_balances(
@@ -55,17 +55,19 @@ api.on("open", () => {
         //     }
         // )
 
-        //api.database_api.get_assets(['1.3.113', '1.3.0'])
+        api.database_api.get_assets(['1.3.113', '1.3.0'], (assets) => {
+            //log.error(assets)
+        })
     })
 })
 let x = false
 // Doing something with assets after knowing they exist
 api.on('store.assets.stored',() => {
     if(!x) {
-        //log.warn(api.getAssets(['CNY', 'BTS']))
+        //log.warn(api.getStoredAssets(['CNY', 'BTS']))
         x = true
     }
-    //log.warn(api.getAsset('CNY'))
+    //log.warn(api.getStoredAsset('CNY'))
     //api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS)
 })
 
