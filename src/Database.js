@@ -47,6 +47,107 @@ class Database {
         return map.get(this).api_id
     }
 
+    /*
+    - Objects
+    get_objects(ids)
+
+    - Subscriptions
+    set_subscribe_callback(callback(variant), notify_remove_create)
+    set_pending_transaction_callback(callback(variant))
+    set_block_applied_callback(callback(block_id))
+    cancel_all_subscriptions()
+
+    - Blocks and transactions
+    get_block_header(block_num)
+    get_block_header_batch(block_nums)
+    get_block(block_num)
+    get_transaction(block_num, trx_in_block)
+
+    - Globals
+    get_chain_properties()
+    get_global_properties()
+    get_config()
+    get_chain_id()
+    get_dynamic_global_properties()
+
+    - Keys
+    get_key_references(key) public key
+    is_public_key_registered(key)
+
+    - Accounts
+    get_accounts(account_ids)
+    get_full_accounts(name_or_ids, bool_subscribe)
+    #get_account_by_name(name)
+    get_account_references(account_id)
+    lookup_account_names(names)
+    lookup_accounts(name, limit)
+    get_account_count()
+
+    - Balances
+    #get_account_balances(id, assets)
+    get_named_account_balances(name, assets)
+    get_balance_objects(addrs) lol? account name?
+    get_vested_balances(objs) balance_ids
+    get_vesting_balances(account_id)
+
+    - Assets
+    #get_assets(asset_ids)
+    list_assets(symbol, limit)
+    #lookup_asset_symbols(symbols_or_ids)
+
+    - Markets / feeds
+    #get_limit_orders(id_a, id_b, limit) asset id
+    get_call_orders(id_a, limit) asset id
+    get_settle_orders(id_a, limit) asset_id
+    get_margin_positions(account_id)
+    get_collateral_bids(asset_id, limit, start)
+    subscribe_to_market(callback(variant), asset_a, asset_b) asset id
+    unsubscribe_from_market(asset_a, asset_b) asset id
+    #get_ticker(base, quote, skip_order_book = false)
+    get_24_volume(base, quote)
+    get_order_book(base, quote, limit=50)
+    get_trade_history(base, quote, start, stop, limit=100)
+    get_trade_history_by_sequence(base, quote, start, stop, limit=100)
+
+    - Witnesses
+    get_witnesses(witness_ids)
+    get_witness_by_account(account_id)
+    lookup_witness_accounts(name, limit)
+    get_witness_count()
+
+    - Committee members
+    get_committee_members(committee_member_ids)
+    get_committee_member_by_account(account_id)
+    lookup_committee_member_accounts(name, limit)
+    get_committee_count()
+
+    - Workers
+    get_all_workers()
+    get_workers_by_account(account_id)
+    get_worker_count()
+
+    - Votes
+    lookup_vote_ids(votes)
+
+    - Authority / Validation
+    get_transaction_hex(transaction)
+    get_required_signatures(transaction, available_keys)
+    get_potential_signatures(transaction)
+    get_potential_address_signatures(transaction)
+    verify_authority(transaction)
+    verify_account_authority(name_or_id, signers)
+    validate_transaction(transaction)
+    get_required_fees(operations, asset_id)
+
+    - Proposed transactions
+    get_proposed_transactions(account_id)
+
+    - Blinded balances
+    get_blinded_balances(commitments) ???
+
+
+    */
+
     /**
      * Return an account object by username
      * @param {string} name account name
