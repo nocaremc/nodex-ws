@@ -75,10 +75,37 @@ api.on("open", () => {
         // })
 
         // Get a transaction from a block
-        api.database_api.get_transaction(24614807, 1, transaction => {
-            log.warn(transaction)
-        })
+        // api.database_api.get_transaction(24614807, 1, transaction => {
+        //     log.warn(transaction)
+        // })
 
+        // Get Chain Properties
+        // api.database_api.get_chain_properties(chain_properties => {
+        //     log.warn(chain_properties)
+        // })
+
+        // Get current global properties
+        // api.database_api.get_global_properties(global_properties => {
+        //     log.warn(global_properties)
+        // })
+
+        // Get compiled constants
+        // api.database_api.get_config(config => {
+        //     log.warn(config)
+        // })
+
+        // Get the chain id
+        // api.database_api.get_chain_id(id => {
+        //     log.warn(id)
+        // })
+
+        // get "dynamic global properties"
+        api.database_api.get_dynamic_global_properties(properties => {
+            log.warn(properties)
+        })
+        
+
+        //api.close()
     })
 })
 let x = false

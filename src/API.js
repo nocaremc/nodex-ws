@@ -166,6 +166,13 @@ class API {
     emit(event, data) {
         map.get(this).events.emit(event, data)
     }
+
+    /**
+     * Close the websocket
+     */
+    close() {
+        map.get(this).connection.close()
+    }
     
     /*
     block() {}

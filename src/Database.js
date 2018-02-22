@@ -44,6 +44,14 @@ class Database {
                     'get_block_header_batch',
                     'get_block',
                     'get_transaction',
+                    // Globals
+                    'get_chain_properties',
+                    'get_global_properties',
+                    'get_config',
+                    'get_chain_id',
+                    'get_dynamic_global_properties',
+
+
 
                     'get_account_by_name',
                     'lookup_asset_symbols',
@@ -69,13 +77,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Globals
-    get_chain_properties()
-    get_global_properties()
-    get_config()
-    get_chain_id()
-    get_dynamic_global_properties()
 
     - Keys
     get_key_references(key) public key
@@ -265,6 +266,93 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Globals
+    //
+
+    /**
+     * Get chain properties object
+     * @param {function} callback 
+     */
+    get_chain_properties(callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_chain_properties,
+            "get_chain_properties",
+            []
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_chain_properties", callback)
+        }
+    }
+
+    /**
+     * Get `current` global properties object
+     * @param {function} callback 
+     */
+    get_global_properties(callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_global_properties,
+            "get_global_properties",
+            []
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_global_properties", callback)
+        }
+    }
+
+    /**
+     * Get compiled constants
+     * @param {function} callback 
+     */
+    get_config(callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_config,
+            "get_config",
+            []
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_config", callback)
+        }
+    }
+
+    /**
+     * Get the chain ID
+     * @param {function} callback 
+     */
+    get_chain_id(callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_chain_id,
+            "get_chain_id",
+            []
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_chain_id", callback)
+        }
+    }
+
+    /**
+     * Get dynamic global properties?
+     * What exactly is this?
+     * @param {function} callback 
+     */
+    get_dynamic_global_properties(callback) {
+        this.connection.request(
+            this.apiD,
+            this.event_ids.get_dynamic_global_properties,
+            "get_dynamic_global_properties",
+            []
+        )
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_dynamic_global_properties", callback)
+        }
+    }
+
+
+
     /**
      * Return an account object by username
      * @param {string} name account name
@@ -433,6 +521,26 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.get_transaction", data.result)
             break;
 
+            /* Globals */
+            case events.get_chain_properties:
+                this.emit("db.get_chain_properties", data.result)
+            break;
+
+            case events.get_global_properties:
+                this.emit("db.get_global_properties", data.result)
+            break;
+
+            case events.get_config:
+                this.emit("db.get_config", data.result)
+            break;
+
+            case events.get_chain_id:
+                this.emit("db.get_chain_id", data.result)
+            break;
+
+            case events.get_dynamic_global_properties:
+                this.emit("db.get_dynamic_global_properties", data.result)
+            break;
 
 
             case events.get_account_balances:
