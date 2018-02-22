@@ -50,7 +50,9 @@ class Database {
                     'get_config',
                     'get_chain_id',
                     'get_dynamic_global_properties',
-
+                    // Keys
+                    'get_key_references',
+                    'is_public_key_registered',
 
 
                     'get_account_by_name',
@@ -77,10 +79,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Keys
-    get_key_references(key) public key
-    is_public_key_registered(key)
 
     - Accounts
     get_accounts(account_ids)
@@ -351,7 +349,45 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Keys
+    //
 
+    /**
+     * Get account IDs with public keys
+     * @param {array} keys public keys as strings
+     * @param {function} callback 
+     */
+    get_key_references(keys, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_key_references,
+            "get_key_references",
+            [keys]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_key_references", callback)
+        }
+    }
+
+    /**
+     * Is an account id(other?) associated with this public key?
+     * @param {string} key public key
+     * @param {function} callback 
+     */
+    is_public_key_registered(key, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.is_public_key_registered,
+            "is_public_key_registered",
+            [key]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.is_public_key_registered", callback)
+        }
+    }
 
     /**
      * Return an account object by username
@@ -496,12 +532,16 @@ if(typeof callback !== 'undefined') {
 
         switch(data.id) {
 
-            /* Objects */
+            //
+            // Objects
+            //
             case events.get_objects:
                 this.emit("db.get_objects", data.result)
             break;
 
-            /* Blocks and transactions */
+            //
+            // Blocks and transactions
+            //
             case events.get_block_header:
                 this.emit("db.get_block_header", data.result)
             break;
@@ -521,7 +561,9 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.get_transaction", data.result)
             break;
 
-            /* Globals */
+            //
+            // Globals
+            // 
             case events.get_chain_properties:
                 this.emit("db.get_chain_properties", data.result)
             break;
@@ -540,6 +582,18 @@ if(typeof callback !== 'undefined') {
 
             case events.get_dynamic_global_properties:
                 this.emit("db.get_dynamic_global_properties", data.result)
+            break;
+            
+            //
+            // Keys
+            //
+            case events.get_key_references:
+                log.error(data)
+                this.emit("db.get_key_references", data.result)
+            break;
+
+            case events.is_public_key_registered:
+                this.emit("db.is_public_key_registered", data.result)
             break;
 
 

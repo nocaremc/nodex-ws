@@ -100,10 +100,29 @@ api.on("open", () => {
         // })
 
         // get "dynamic global properties"
-        api.database_api.get_dynamic_global_properties(properties => {
-            log.warn(properties)
-        })
-        
+        // api.database_api.get_dynamic_global_properties(properties => {
+        //     log.warn(properties)
+        // })
+
+        // Get account ids associated with these public keys
+        // api.database_api.get_key_references(
+        //     [
+        //         'BTS6QzRTm9AeoHwfysF2dcx6uoSTQjCvdBCBhx539dgxBS8c88URj',
+        //         'BTS65xWomDhPVQWS5gormTrUfJKNhNw8dfaFJ7AAWhADWTcaJWAkw'
+        //     ],
+        //     properties => {
+        //         log.warn(properties)
+        //     }
+        // )
+
+        // Check if public key is registered (to an account?)
+        api.database_api.is_public_key_registered(
+            'BTS6QzRTm9AeoHwfysF2dcx6uoSTQjCvdBCBhx539dgxBS8c88URj',
+            properties => {
+                log.warn(properties)
+            }
+        )
+    
 
         //api.close()
     })
