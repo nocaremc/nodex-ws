@@ -107,8 +107,8 @@ api.on("open", () => {
         // Get account ids associated with these public keys
         // api.database_api.get_key_references(
         //     [
-        //         'BTS6QzRTm9AeoHwfysF2dcx6uoSTQjCvdBCBhx539dgxBS8c88URj',
-        //         'BTS65xWomDhPVQWS5gormTrUfJKNhNw8dfaFJ7AAWhADWTcaJWAkw'
+        //         '<public_key>',
+        //         '<public_key>'
         //     ],
         //     properties => {
         //         log.warn(properties)
@@ -116,13 +116,55 @@ api.on("open", () => {
         // )
 
         // Check if public key is registered (to an account?)
-        api.database_api.is_public_key_registered(
-            'BTS6QzRTm9AeoHwfysF2dcx6uoSTQjCvdBCBhx539dgxBS8c88URj',
-            properties => {
-                log.warn(properties)
-            }
-        )
-    
+        // api.database_api.is_public_key_registered(
+        //     '<public_key>',
+        //     properties => {
+        //         log.warn(properties)
+        //     }
+        // )
+
+        // Get a list of accounts by ids
+        // api.database_api.get_accounts([process.env.DEX_USER_ID], accounts => {
+        //     log.warn(accounts)
+        // })
+
+        // Get "full accounts" with a list of ids or names
+        // api.database_api.get_full_accounts(
+        //     [
+        //         process.env.DEX_USER_ID,
+        //         process.env.DEX_USER
+        //     ],
+        //     false,
+        //     accounts => {
+        //         log.warn(accounts)
+        //     }
+        
+        // Get accounts that refer to this account in their permissions
+        // api.database_api.get_account_references(process.env.DEX_USER_ID, referances => {
+        //     log.warn(referances)
+        // })
+
+        // Look up a list of accounts using account names
+        // api.database_api.lookup_account_names(
+        //     [
+        //         process.env.DEX_USER,
+        //         'bitshares'
+        //     ],
+        //     accounts => {
+        //         log.warn(accounts)
+        //     }
+        // )
+
+        // Search for an account by name, list 10 results
+        // api.database_api.lookup_accounts(process.env.DEX_USER, 10, accounts => {
+        //     log.warn(accounts)
+        // })
+
+        // Get a total count of accounts
+        api.database_api.get_account_count(count => {
+            log.warn(count)
+        })
+        
 
         //api.close()
     })

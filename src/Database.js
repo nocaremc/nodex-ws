@@ -54,8 +54,15 @@ class Database {
                     'get_key_references',
                     'is_public_key_registered',
 
-
+                    // Accounts
+                    'get_accounts',
+                    'get_full_accounts',
                     'get_account_by_name',
+                    'get_account_references',
+                    'lookup_account_names',
+                    'lookup_accounts',
+                    'get_account_count',
+
                     'lookup_asset_symbols',
                     'get_assets',
                     'get_limit_orders',
@@ -79,15 +86,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Accounts
-    get_accounts(account_ids)
-    get_full_accounts(name_or_ids, bool_subscribe)
-    #get_account_by_name(name)
-    get_account_references(account_id)
-    lookup_account_names(names)
-    lookup_accounts(name, limit)
-    get_account_count()
 
     - Balances
     #get_account_balances(id, assets)
@@ -389,6 +387,50 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Accounts
+    //
+
+    /**
+     * Get account objects by list of account ids
+     * @param {array} account_ids 
+     * @param {function} callback 
+     */
+    get_accounts(account_ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_accounts,
+            "get_accounts",
+            [account_ids]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_accounts", callback)
+        }
+    }
+
+    /**
+     * Get "full accounts" with a list of ids or names
+     * @param {array} name_or_ids 
+     * @param {boolean} subscribe 
+     * @param {function} callback 
+     */
+    get_full_accounts(name_or_ids, subscribe, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_full_accounts,
+            "get_full_accounts",
+            [
+                name_or_ids,
+                subscribe
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_full_accounts", callback)
+        }
+    }
+
     /**
      * Return an account object by username
      * @param {string} name account name
@@ -406,6 +448,88 @@ if(typeof callback !== 'undefined') {
             this.once("db.get_account_by_name", callback)
         }
     }
+
+    /**
+     * Get accounts that refer to this account in their owner/active permissions
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
+    get_account_references(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_account_references,
+            "get_account_references",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_account_references", callback)
+        }
+    }
+
+    /**
+     * Look up a list of accounts by their names
+     * @param {array} names account names
+     * @param {function} callback 
+     */
+    lookup_account_names(names, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.lookup_account_names,
+            "lookup_account_names",
+            [names]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_account_names", callback)
+        }
+    }
+
+    /**
+     * Search for accounts like given account name/string
+     * @param {string} name 
+     * @param {integer} limit returned results MAX 1000, default 100
+     * @param {function} callback 
+     */
+    lookup_accounts(name, limit, callback) {
+        // Limit should exist, be positive and less than 1k
+        if(!limit || limit < 0 || limit > 1000) {
+            limit = 100
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.lookup_accounts,
+            "lookup_accounts",
+            [
+                name,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_accounts", callback)
+        }
+    }
+
+    /**
+     * Get a total count of accounts
+     * @param {function} callback 
+     */
+    get_account_count(callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_account_count,
+            "get_account_count",
+            []
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_account_count", callback)
+        }
+    }
+
+
 
     /**
      * Return a list of assets by asset_ids
@@ -522,6 +646,55 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+
+    /**
+     * @return {Connection} Connection instance
+     */
+    get connection() {
+        return map.get(this).connection
+    }
+
+    /**
+     * @return {object} event_ids
+     */
+    get event_ids() {
+        return map.get(this).event_ids
+    }
+
+    /**
+     * @return {integer} the API ID given for this instance
+     */
+    get apiID() {
+        return map.get(this).api_id
+    }
+
+    /**
+     * Attach an event to EventEmitter 
+     * @param {string} event event name
+     * @param {function} callback 
+     */
+    on(event, callback) {
+        map.get(this).events.on(event, callback)
+    }
+
+    /**
+     * Attach a event to EventEmitter to be fired only once
+     * @param {string} event event name
+     * @param {function} callback 
+     */
+    once(event, callback) {
+        map.get(this).events.once(event, callback)
+    }
+
+    /**
+     * Emit an event using EventEmitter
+     * @param {string} event event name
+     * @param {anything} data 
+     */
+    emit(event, data) {
+        map.get(this).events.emit(event, data)
+    }
+
     /**
      * Handles incoming websocket responses related to database api
      * @param {string} data response data as JSON string
@@ -529,6 +702,10 @@ if(typeof callback !== 'undefined') {
     message(data) {
         data = JSON.parse(data)
         let events = map.get(this).event_ids
+
+        if(typeof data.error !== 'undefined') {
+            log.error(data.error)
+        }
 
         switch(data.id) {
 
@@ -588,7 +765,6 @@ if(typeof callback !== 'undefined') {
             // Keys
             //
             case events.get_key_references:
-                log.error(data)
                 this.emit("db.get_key_references", data.result)
             break;
 
@@ -596,6 +772,41 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.is_public_key_registered", data.result)
             break;
 
+            //
+            // Accounts
+            //
+            case events.get_accounts:
+                this.emit("db.get_accounts", data.result)
+            break;
+
+            case events.get_full_accounts:
+                this.emit("db.get_full_accounts", data.result)
+            break;
+
+            case events.get_account_by_name:
+                this.emit("db.get_account_by_name", data.result)
+            break;
+
+            case events.get_account_references:
+                this.emit("db.get_account_references", data.result)
+            break;
+
+            case events.lookup_account_names:
+                this.emit("db.lookup_account_names", data.result)
+            break;
+
+            case events.lookup_accounts:
+                this.emit("db.lookup_accounts", data.result)
+            break;
+
+            case events.get_account_count:
+                this.emit("db.get_account_count", data.result)
+            break;
+
+
+            case events.get_account_by_name:
+                this.emit("db.get_account_by_name", data.result)
+            break;
 
             case events.get_account_balances:
                 //let x = new Balances(data.result)
@@ -613,10 +824,6 @@ if(typeof callback !== 'undefined') {
                 this.emit('store.assets', data.result)
             break;
 
-            case events.get_account_by_name:
-                this.emit("db.get_account_by_name", data.result)
-            break;
-
             case events.lookup_asset_symbols:
                 this.emit("db.lookup_asset_symbols", data.result)
             break;
@@ -629,54 +836,6 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.get_ticker", data.result)
             break;
         }
-    }
-
-    /**
-     * @return {Connection} Connection instance
-     */
-    get connection() {
-        return map.get(this).connection
-    }
-
-    /**
-     * @return {object} event_ids
-     */
-    get event_ids() {
-        return map.get(this).event_ids
-    }
-
-    /**
-     * @return {integer} the API ID given for this instance
-     */
-    get apiID() {
-        return map.get(this).api_id
-    }
-
-    /**
-     * Attach an event to EventEmitter 
-     * @param {string} event event name
-     * @param {function} callback 
-     */
-    on(event, callback) {
-        map.get(this).events.on(event, callback)
-    }
-
-    /**
-     * Attach a event to EventEmitter to be fired only once
-     * @param {string} event event name
-     * @param {function} callback 
-     */
-    once(event, callback) {
-        map.get(this).events.once(event, callback)
-    }
-
-    /**
-     * Emit an event using EventEmitter
-     * @param {string} event event name
-     * @param {anything} data 
-     */
-    emit(event, data) {
-        map.get(this).events.emit(event, data)
     }
 }
 
