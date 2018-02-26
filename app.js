@@ -41,15 +41,6 @@ api.on("open", () => {
         //     log.warn(result)
         // })
 
-        // Get account balance for cny and usd
-        // api.database_api.get_account_balances(
-        //     process.env.DEX_USER_ID,
-        //     ['1.3.0', '1.3.113'],
-        //     result => {
-        //         log.warn(result)
-        //     }
-        // )
-
         //api.database_api.get_assets(['1.3.113', '1.3.0'], assets => {
             //log.error(assets)
         //})
@@ -128,7 +119,7 @@ api.on("open", () => {
         //     log.warn(accounts)
         // })
 
-        // Get "full accounts" with a list of ids or names
+        //Get "full accounts" with a list of ids or names
         // api.database_api.get_full_accounts(
         //     [
         //         process.env.DEX_USER_ID,
@@ -136,8 +127,9 @@ api.on("open", () => {
         //     ],
         //     false,
         //     accounts => {
-        //         log.warn(accounts)
+        //         log.warn(accounts[0][1].balances)
         //     }
+        // )
         
         // Get accounts that refer to this account in their permissions
         // api.database_api.get_account_references(process.env.DEX_USER_ID, referances => {
@@ -161,10 +153,49 @@ api.on("open", () => {
         // })
 
         // Get a total count of accounts
-        api.database_api.get_account_count(count => {
-            log.warn(count)
-        })
+        // api.database_api.get_account_count(count => {
+        //     log.warn(count)
+        // })
         
+        // Get account balance for cny and usd
+        // api.database_api.get_account_balances(
+        //     process.env.DEX_USER_ID,
+        //     ['1.3.0', '1.3.113'],
+        //     result => {
+        //         log.warn(result)
+        //     }
+        // )
+
+        // Get a specific account's balance for specified assets
+        // api.database_api.get_named_account_balances(
+        //     process.env.DEX_USER,
+        //     ['1.3.0'],
+        //     result => {
+        //         log.warn(result)
+        //     }
+        // )
+
+// Unsure how to get this one going
+        // api.database_api.get_balance_objects(
+        //     ['base58somethingsomething'],
+        //     result => {
+        //         log.warn(result)
+        //     }
+        // )
+// Unsure how to get this one going
+        // api.database_api.get_vested_balances(
+        //     [process.env.DEX_USER_ID],
+        //     result => {
+        //         log.error(result)
+        //     }
+        // )
+        
+        // api.database_api.get_vesting_balances(
+        //     process.env.DEX_USER_ID,
+        //     results => {
+        //         log.error(result[0])
+        //     }
+        // )
 
         //api.close()
     })

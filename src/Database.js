@@ -62,12 +62,19 @@ class Database {
                     'lookup_account_names',
                     'lookup_accounts',
                     'get_account_count',
+                    // Balances
+                    'get_account_balances',
+                    'get_named_account_balances',
+                    'get_balance_objects',
+                    'get_vested_balances',
+                    'get_vesting_balances',
+
 
                     'lookup_asset_symbols',
                     'get_assets',
                     'get_limit_orders',
                     'get_ticker',
-                    'get_account_balances',
+                    
                 ]
             )
         })
@@ -88,11 +95,7 @@ class Database {
     cancel_all_subscriptions()
 
     - Balances
-    #get_account_balances(id, assets)
-    get_named_account_balances(name, assets)
-    get_balance_objects(addrs) lol? account name?
-    get_vested_balances(objs) balance_ids
-    get_vesting_balances(account_id)
+
 
     - Assets
     #get_assets(asset_ids)
@@ -529,7 +532,108 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    /**
+     * Check account balances
+     * @param {string} account_id 
+     * @param {array} assets - asset ids
+     * @param {function} callback 
+     */
+    get_account_balances(account_id, assets, callback) {
+        // LATER: error check asset ids... as a start
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_account_balances,
+            "get_account_balances",
+            [
+                account_id,
+                assets
+            ]
+        )
 
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_account_balances", callback)
+        }
+    }
+    
+    /**
+     * Get a specific account's balances for specified assets
+     * @param {string} name account name
+     * @param {array} asset_ids 
+     * @param {function} callback 
+     */
+    get_named_account_balances(name, asset_ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_named_account_balances,
+            "get_named_account_balances",
+            [
+                name,
+                asset_ids
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_named_account_balances", callback)
+        }
+    }
+
+    /**
+     * Get unclaimed balance objects for base58 addresses (legacy?)
+     * @param {array} addrs array of base58 addresses?
+     * @param {function} callback 
+     */
+    get_balance_objects(addrs, callback) {
+        log.error("DB.get_balance_objects is not implemented")
+        // this.connection.request(
+        //     this.apiID,
+        //     this.event_ids.get_balance_objects,
+        //     "get_balance_objects",
+        //     [
+        //         addrs
+        //     ]
+        // )
+
+        // if(typeof callback !== 'undefined') {
+        //     this.once("db.get_balance_objects", callback)
+        // }
+    }
+
+    /**
+     * Get vested balances for balance objects?
+     * @param {array} objs 
+     * @param {*} callback 
+     */
+    get_vested_balances(objs, callback) {
+        log.error("DB.get_vested_balances is not implemented")
+        // this.connection.request(
+        //     this.apiID,
+        //     this.event_ids.get_vested_balances,
+        //     "get_vested_balances",
+        //     [objs]
+        // )
+
+        // if(typeof callback !== 'undefined') {
+        //     this.once("db.get_vested_balances", callback)
+        // }
+    }
+
+    /**
+     * Get the vesting balances for an account
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
+    get_vesting_balances(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_vesting_balances,
+            "get_vesting_balances",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_vesting_balances", callback)
+        }
+    }
 
     /**
      * Return a list of assets by asset_ids
@@ -622,30 +726,6 @@ if(typeof callback !== 'undefined') {
             this.once("db.get_ticker", callback)
         }
     }
-
-    /**
-     * Check account balances
-     * @param {string} account_id 
-     * @param {array} assets - asset ids
-     * @param {function} callback 
-     */
-    get_account_balances(account_id, assets, callback) {
-        // LATER: error check asset ids... as a start
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_account_balances,
-            "get_account_balances",
-            [
-                account_id,
-                assets
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_account_balances", callback)
-        }
-    }
-
 
     /**
      * @return {Connection} Connection instance
@@ -802,15 +882,35 @@ if(typeof callback !== 'undefined') {
             case events.get_account_count:
                 this.emit("db.get_account_count", data.result)
             break;
+            
+            //
+            // Balances
+            //
+            case events.get_account_balances:
+                //let x = new Balances(data.result)
+                this.emit("db.get_account_balances", data.result)
+            break;
+            
+            case events.get_named_account_balances:
+                this.emit("db.get_named_account_balances", data.result)
+            break;
+
+            case events.get_balance_objects:
+                this.emit("db.get_balance_objects", data.result)
+            break;
+
+            case events.get_vested_balances:
+                this.emit("db.get_vested_balances", data.result)
+            break;
+
+            case events.get_vesting_balances:
+                this.emit("db.get_vesting_balances", data.result)
+            break;
+
 
 
             case events.get_account_by_name:
                 this.emit("db.get_account_by_name", data.result)
-            break;
-
-            case events.get_account_balances:
-                //let x = new Balances(data.result)
-                this.emit("db.get_account_balances", data.result)
             break;
 
             case events.get_assets:
