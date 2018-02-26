@@ -197,6 +197,11 @@ api.on("open", () => {
         //     }
         // )
 
+        // Search for an asset by symbol name
+        // api.database_api.list_assets('CNY', 1, results => {
+        //     log.warn(results)
+        // })
+
         //api.close()
     })
 })

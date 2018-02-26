@@ -69,9 +69,13 @@ class Database {
                     'get_vested_balances',
                     'get_vesting_balances',
 
-
-                    'lookup_asset_symbols',
+                    //
+                    // Assets
+                    // 
                     'get_assets',
+                    'list_assets',
+                    'lookup_asset_symbols',
+
                     'get_limit_orders',
                     'get_ticker',
                     
@@ -93,14 +97,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Balances
-
-
-    - Assets
-    #get_assets(asset_ids)
-    list_assets(symbol, limit)
-    #lookup_asset_symbols(symbols_or_ids)
 
     - Markets / feeds
     #get_limit_orders(id_a, id_b, limit) asset id
@@ -635,6 +631,10 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Assets
+    //
+
     /**
      * Return a list of assets by asset_ids
      * @param {Array} asset_ids 
@@ -652,6 +652,31 @@ if(typeof callback !== 'undefined') {
 
         if(typeof callback !== 'undefined') {
             this.once("db.get_assets", callback)
+        }
+    }
+
+    /**
+     * Search for an asset by its symbol
+     * @param {string} symbol asset symbol
+     * @param {integer} limit result limit. max 100
+     * @param {function} callback 
+     */
+    list_assets(symbol, limit, callback) {
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+        this.connection.request(
+            this.apiID,
+            this.event_ids.list_assets,
+            "list_assets",
+            [
+                symbol,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.list_assets", callback)
         }
     }
     
@@ -907,12 +932,10 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.get_vesting_balances", data.result)
             break;
 
-
-
-            case events.get_account_by_name:
-                this.emit("db.get_account_by_name", data.result)
-            break;
-
+            //
+            // Assets
+            //
+            
             case events.get_assets:
                 // After assets have been stored, we'll pass the stored assets
                 // back to get_assets
@@ -924,9 +947,19 @@ if(typeof callback !== 'undefined') {
                 this.emit('store.assets', data.result)
             break;
 
+            case events.list_assets:
+                this.emit("db.list_assets", data.result)
+            break;
+            
             case events.lookup_asset_symbols:
                 this.emit("db.lookup_asset_symbols", data.result)
             break;
+
+
+
+
+
+
 
             case events.get_limit_orders:
                 this.emit("db.get_limit_orders", data.result)
