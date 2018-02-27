@@ -68,16 +68,27 @@ class Database {
                     'get_balance_objects',
                     'get_vested_balances',
                     'get_vesting_balances',
-
-                    //
                     // Assets
-                    // 
                     'get_assets',
                     'list_assets',
                     'lookup_asset_symbols',
-
+                    // Markets / Feeds
                     'get_limit_orders',
+                    'get_call_orders',
+                    'get_settle_orders',
+                    'get_margin_positions',
+                    'get_collateral_bids',
+                    'subscribe_to_market',
+                    'unsubscribe_from_market',
                     'get_ticker',
+                    'get_24_volume',
+                    'get_order_book',
+                    'get_trade_history',
+                    'get_trade_history_by_sequence',
+
+
+                    
+                    
                     
                 ]
             )
@@ -97,20 +108,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Markets / feeds
-    #get_limit_orders(id_a, id_b, limit) asset id
-    get_call_orders(id_a, limit) asset id
-    get_settle_orders(id_a, limit) asset_id
-    get_margin_positions(account_id)
-    get_collateral_bids(asset_id, limit, start)
-    subscribe_to_market(callback(variant), asset_a, asset_b) asset id
-    unsubscribe_from_market(asset_a, asset_b) asset id
-    #get_ticker(base, quote, skip_order_book = false)
-    get_24_volume(base, quote)
-    get_order_book(base, quote, limit=50)
-    get_trade_history(base, quote, start, stop, limit=100)
-    get_trade_history_by_sequence(base, quote, start, stop, limit=100)
 
     - Witnesses
     get_witnesses(witness_ids)
@@ -665,6 +662,10 @@ if(typeof callback !== 'undefined') {
         if(!limit || limit < 1) {
             limit = 1
         }
+        else if(limit > 100) {
+            limit = 100
+        }
+
         this.connection.request(
             this.apiID,
             this.event_ids.list_assets,
@@ -702,16 +703,23 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Markets / feeds
+    //
+
     /**
      * Get limit orders for asset pair
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
-     * @param {int} limit - Maximum of 100, Default 20
+     * @param {int} limit - Maximum of 100, Default 1
      * @param {function} callback 
      */
     get_limit_orders(asset_id_a, asset_id_b, limit, callback) {
-        if(typeof limit === 'undefined') {
-            limit = 20
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+        else if(limit > 100) {
+            limit = 100
         }
 
         this.connection.request(
@@ -730,20 +738,133 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    get_call_orders(asset_id, limit, callback) {
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+        else if(limit > 100) {
+            limit = 100
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_call_orders,
+            "get_call_orders",
+            [
+                asset_id,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_call_orders", callback)
+        }
+    }
+
+    get_settle_orders(asset_id, limit, callback) {
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+        else if(limit > 100) {
+            limit = 100
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_settle_orders,
+            "get_settle_orders",
+            [
+                asset_id,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_settle_orders", callback)
+        }
+    }
+
+    get_margin_positions(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_margin_positions,
+            "get_margin_positions",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_margin_positions", callback)
+        }
+    }
+
+    get_collateral_bids(asset_id, limit, start, callback) {
+        log.error("db.get_collateral_bids is not yet implemented")
+        /*
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+        else if(limit > 100) {
+            limit = 100
+        }
+
+        if(!start) {
+            start = 0
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_collateral_bids,
+            "get_collateral_bids",
+            [
+                asset_id,
+                limit,
+                start
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_collateral_bids", callback)
+        }
+        */
+    }
+
+    subscribe_to_market(callback, asset_id_a, asset_id_b) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.subscribe_to_market,
+            "subscribe_to_market",
+            [
+                callback,
+                asset_id_b,
+                asset_id_a
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.on("db.subscribe_to_market", callback)
+        }
+    }
+
+    unsubscribe_from_market(asset_id_a, asset_id_b) {
+
+    }
+    
     /**
      * Get the ticker price for asset pair
      * @param {string} asset_id_base 
      * @param {string} asset_id_quote 
+     * @param {boolean} skip skip order book? default false
      * @param {function} callback 
      */
-    get_ticker(asset_id_base, asset_id_quote, callback) {
+    get_ticker(asset_id_base, asset_id_quote, skip, callback) {
         this.connection.request(
             this.apiID,
             this.event_ids.get_ticker,
             "get_ticker",
             [
                 asset_id_base,
-                asset_id_quote
+                asset_id_quote,
+                skip
             ]
         )
 
@@ -751,6 +872,15 @@ if(typeof callback !== 'undefined') {
             this.once("db.get_ticker", callback)
         }
     }
+    //get_24_volume(base, quote)
+    //get_order_book(base, quote, limit=50)
+    //get_trade_history(base, quote, start, stop, limit=100)
+    //get_trade_history_by_sequence(base, quote, start, stop, limit=100)
+
+
+    
+
+    
 
     /**
      * @return {Connection} Connection instance
@@ -808,6 +938,8 @@ if(typeof callback !== 'undefined') {
         data = JSON.parse(data)
         let events = map.get(this).event_ids
 
+        // LATER: Would be nice for every error to be handled
+        // instead of simply dumping assertion junk
         if(typeof data.error !== 'undefined') {
             log.error(data.error)
         }
@@ -955,18 +1087,77 @@ if(typeof callback !== 'undefined') {
                 this.emit("db.lookup_asset_symbols", data.result)
             break;
 
-
-
-
-
-
+            //
+            // Markets / Feeds
+            //
 
             case events.get_limit_orders:
                 this.emit("db.get_limit_orders", data.result)
             break;
 
+            case events.get_call_orders:
+                if(data.error) {
+                    switch(data.error.code) {
+                        case 1:
+                            log.error("You cannot list call orders for this asset")
+                        break;
+                    }
+                }
+                this.emit("db.get_call_orders", data.result)
+            break;
+
+            case events.get_settle_orders:
+                this.emit("db.get_settle_orders", data.result)
+            break;
+
+            case events.get_margin_positions:
+                this.emit("db.get_margin_positions", data.result)
+            break;
+
+            case events.get_collateral_bids:
+                if(data.error) {
+                    switch(data.error.code) {
+                        case 1:
+                            log.error("You cannot list collateral bids for this asset")
+                        break;
+                    }
+                }
+                this.emit("db.get_collateral_bids", data.result)
+            break;
+
+            case events.subscribe_to_market:
+                this.emit("db.subscribe_to_market", data.result)
+            break;
+
+            case events.unsubscribe_from_market:
+                this.emit("db.unsubscribe_from_market", data.result)
+            break;
+
             case events.get_ticker:
                 this.emit("db.get_ticker", data.result)
+            break;
+
+            case events.get_24_volume:
+                this.emit("db.get_24_volume", data.result)
+            break;
+
+            case events.get_order_book:
+                this.emit("db.get_order_book", data.result)
+            break;
+
+            case events.get_trade_history:
+                this.emit("db.get_trade_history", data.result)
+            break;
+
+            case events.get_trade_history_by_sequence:
+                this.emit("db.get_trade_history_by_sequence", data.result)
+            break;
+
+            default:
+                log.info("Unkown event coming")
+                if(data.method === 'notice') {
+                    log.warn(data.params[1])
+                }
             break;
         }
     }

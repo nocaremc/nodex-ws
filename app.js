@@ -202,6 +202,38 @@ api.on("open", () => {
         //     log.warn(results)
         // })
 
+        // Get call orders for asset
+        // api.database_api.get_call_orders('1.3.113', 20, orders => {
+        //     log.warn(orders)
+        // })
+
+        // get settle orders for asset
+        // api.database_api.get_settle_orders('1.3.113', 20, orders => {
+        //     log.warn(orders)
+        // })
+
+        // Get margins for an account
+        // api.database_api.get_margin_positions(process.env.DEX_USER_ID, margins => {
+        //     log.warn(margins)
+        // })
+
+// Unsure how to use this, or if even implemented
+        // api.database_api.get_collateral_bids('1.3.0', 1000, 0, bids => {
+        //     log.warn(bids)
+        // })
+
+        let market_sub = (variant) => {
+            log.success(variant)
+        }
+
+        api.database_api.subscribe_to_market(
+            '1.3.0', // bts
+            '1.3.113', // cny
+            variant => {
+                log.warn(variant)
+            },
+        )
+        
         //api.close()
     })
 })
@@ -209,6 +241,7 @@ let x = false
 // Doing something with assets after knowing they exist
 api.on('store.assets.stored',() => {
     if(!x) {
+        log.warn(api.getStoredAsset('CNY'))
         //log.warn(api.getStoredAssets(['CNY', 'BTS']))
         x = true
     }
