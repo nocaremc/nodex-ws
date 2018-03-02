@@ -944,11 +944,70 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
-    get_24_volume(base, quote) {
+    /**
+     * Get 24 hour volume of an asset pair by its symbol names
+     * @param {string} base asset symbol
+     * @param {string} quote asset symbol
+     * @param {function} callback 
+     */
+    get_24_volume(base, quote, callback) {
+        if(typeof base !== "string" || typeof quote !== "string") {
+            log.error("db.get_24_volume: Base and Quote must be strings")
+            return
+        }
 
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_24_volume,
+            "get_24_volume",
+            [
+                base.toUpperCase(),
+                quote.toUpperCase()
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_24_volume", callback)
+        }
     }
-    
-    //get_order_book(base, quote, limit=50)
+
+    /**
+     * Get order book for an asset pair by symbol names
+     * @param {string} base asset symbol
+     * @param {string} quote asset symbol
+     * @param {integer} limit min 1, max 50
+     * @param {function} callback 
+     */
+    get_order_book(base, quote, limit, callback) {
+        if(typeof base !== "string" || typeof quote !== "string") {
+            log.error("db.get_order_book: Base and Quote must be strings")
+            return
+        }
+        
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+
+        if(limit > 50) {
+            limit = 50
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_order_book,
+            "get_order_book",
+            [
+                base.toUpperCase(),
+                quote.toUpperCase(),
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_order_book", callback)
+        }
+    }
+
     //get_trade_history(base, quote, start, stop, limit=100)
     //get_trade_history_by_sequence(base, quote, start, stop, limit=100)
 

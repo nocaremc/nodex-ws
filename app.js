@@ -223,16 +223,25 @@ api.on("open", () => {
         // })
 
         // Subscribe to a bts:cny market
-        api.database_api.subscribe_to_market(
-            '1.3.0', // bts
-            '1.3.113', // cny
-            market_event => {
-                log.warn(market_event)
-                // This will probably run a few times before unsub actually happens
-                // unsubscribe from bts:cny market
-                api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
-            }
-        )
+        // api.database_api.subscribe_to_market(
+        //     '1.3.0', // bts
+        //     '1.3.113', // cny
+        //     market_event => {
+        //         log.warn(market_event)
+        //         // This will probably run a few times before unsub actually happens
+        //         // unsubscribe from bts:cny market
+        //         api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
+        //     }
+        // )
+
+        // Get 24 hour volume of an asset pair by symbol names
+        // api.database_api.get_24_volume('BTS', 'CNY', volume => {
+        //     log.warn(volume)
+        // })
+
+        api.database_api.get_order_book('CNY', 'BTS', 50, orders => {
+            log.warn(orders)
+        })
         
         //api.close()
     })
