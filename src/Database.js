@@ -1,3 +1,5 @@
+const Dict = require('collections/dict')
+const Map = require('collections/map')
 const log = require('./Log.js')
 //const Balances = require('./graphene/Balances.js')
 const Asset = require('./graphene/Asset.js')
@@ -91,7 +93,8 @@ class Database {
                     
                     
                 ]
-            )
+            ),
+            subscription_ids: new Map()
         })
 
         //log.error(map.get(this).event_ids)
@@ -525,6 +528,10 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    //
+    // Balances
+    //
+
     /**
      * Check account balances
      * @param {string} account_id 
@@ -828,25 +835,57 @@ if(typeof callback !== 'undefined') {
         */
     }
 
-    subscribe_to_market(callback, asset_id_a, asset_id_b) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.subscribe_to_market,
-            "subscribe_to_market",
-            [
-                callback,
-                asset_id_b,
-                asset_id_a
-            ]
-        )
+    subscribe_to_market(asset_id_a, asset_id_b, callback) {
+        let key = this.event_ids.subscribe_to_market + this.subscription_ids.length + 500
+        
+        let value = asset_id_a + ":" + asset_id_b
 
-        if(typeof callback !== 'undefined') {
-            this.on("db.subscribe_to_market", callback)
+        // Check if a subscription for this market exists
+        // .... this doesn't stop the key from repeating
+        if(!this.subscription_ids.has(key)) {
+            this.subscription_ids.set(key, value)
+
+            this.connection.request(
+                this.apiID,
+                this.event_ids.subscribe_to_market,
+                "subscribe_to_market",
+                [
+                    key,
+                    asset_id_a,
+                    asset_id_b
+                ]
+            )
+    
+            if(typeof callback !== 'undefined') {
+                this.on("db.subscribe_to_market." + value, callback)
+            }
+        } else {
+            log.error("A subscription for: \"" + value + "\" already exists!")
         }
     }
 
     unsubscribe_from_market(asset_id_a, asset_id_b) {
-
+        // Determine if this asset pair is subscribed to
+        let pair = this.subscription_ids.filter(item => {
+            return item === asset_id_a + ":" + asset_id_b
+        })
+        
+        if(pair.length > 0) {
+            if(pair.length > 1) {
+                log.error('This is too long..')
+            }
+            this.connection.request(
+                this.apiID,
+                this.event_ids.unsubscribe_from_market,
+                "unsubscribe_from_market",
+                [
+                    asset_id_a,
+                    asset_id_b
+                ]
+            )
+            this.subscription_ids.delete(pair.get(0))
+            log.info("Removed market subscription: " + asset_id_a + ":" + asset_id_b)
+        }
     }
     
     /**
@@ -894,6 +933,10 @@ if(typeof callback !== 'undefined') {
      */
     get event_ids() {
         return map.get(this).event_ids
+    }
+
+    get subscription_ids() {
+        return map.get(this).subscription_ids
     }
 
     /**
@@ -1154,10 +1197,22 @@ if(typeof callback !== 'undefined') {
             break;
 
             default:
-                log.info("Unkown event coming")
+                //log.info("Unkown event coming")
+                
+                // This may be a subscription
                 if(data.method === 'notice') {
-                    log.warn(data.params[1])
+                    let id = data.params[0]
+
+                    // Emit event if subscription key found
+                    if(this.subscription_ids.has(id)) {
+                        this.emit(
+                            "db.subscribe_to_market." + this.subscription_ids.get(id),
+                            data.params[1]
+                        )
+                        return
+                    }
                 }
+                log.info(data)
             break;
         }
     }

@@ -222,16 +222,16 @@ api.on("open", () => {
         //     log.warn(bids)
         // })
 
-        let market_sub = (variant) => {
-            log.success(variant)
-        }
-
+        // Subscribe to a bts:cny market
         api.database_api.subscribe_to_market(
             '1.3.0', // bts
             '1.3.113', // cny
-            variant => {
-                log.warn(variant)
-            },
+            market_event => {
+                log.warn(market_event)
+                // This will probably run a few times before unsub actually happens
+                // unsubscribe from bts:cny market
+                api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
+            }
         )
         
         //api.close()
