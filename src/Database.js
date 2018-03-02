@@ -745,6 +745,12 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    /**
+     * Get call orders for an asset by id
+     * @param {string} asset_id 
+     * @param {integer} limit Max 100, min 1
+     * @param {function} callback 
+     */
     get_call_orders(asset_id, limit, callback) {
         if(!limit || limit < 1) {
             limit = 1
@@ -768,6 +774,12 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    /**
+     * Get settlement orders for an asset by id
+     * @param {string} asset_id 
+     * @param {integer} limit Max 100, min 1
+     * @param {function} callback 
+     */
     get_settle_orders(asset_id, limit, callback) {
         if(!limit || limit < 1) {
             limit = 1
@@ -791,6 +803,11 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    /**
+     * Get margin positions for an account by id
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
     get_margin_positions(account_id, callback) {
         this.connection.request(
             this.apiID,
@@ -804,37 +821,44 @@ if(typeof callback !== 'undefined') {
         }
     }
 
-    get_collateral_bids(asset_id, limit, start, callback) {
-        log.error("db.get_collateral_bids is not yet implemented")
-        /*
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-        else if(limit > 100) {
-            limit = 100
-        }
-
-        if(!start) {
-            start = 0
-        }
-
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_collateral_bids,
-            "get_collateral_bids",
-            [
-                asset_id,
-                limit,
-                start
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_collateral_bids", callback)
-        }
-        */
+get_collateral_bids(asset_id, limit, start, callback) {
+    log.error("db.get_collateral_bids is not yet implemented")
+    /*
+    if(!limit || limit < 1) {
+        limit = 1
+    }
+    else if(limit > 100) {
+        limit = 100
     }
 
+    if(!start) {
+        start = 0
+    }
+
+    this.connection.request(
+        this.apiID,
+        this.event_ids.get_collateral_bids,
+        "get_collateral_bids",
+        [
+            asset_id,
+            limit,
+            start
+        ]
+    )
+
+    if(typeof callback !== 'undefined') {
+        this.once("db.get_collateral_bids", callback)
+    }
+    */
+}
+
+    /**
+     * Initiate a subscription to the market for an asset pair
+     * Repeatedly sends information on placed & filled orders, margins opened, etc
+     * @param {string} asset_id_a 
+     * @param {string} asset_id_b 
+     * @param {function} callback 
+     */
     subscribe_to_market(asset_id_a, asset_id_b, callback) {
         let key = this.event_ids.subscribe_to_market + this.subscription_ids.length + 500
         
@@ -864,6 +888,11 @@ if(typeof callback !== 'undefined') {
         }
     }
 
+    /**
+     * Terminates the subscription for a pair
+     * @param {string} asset_id_a 
+     * @param {string} asset_id_b 
+     */
     unsubscribe_from_market(asset_id_a, asset_id_b) {
         // Determine if this asset pair is subscribed to
         let pair = this.subscription_ids.filter(item => {
@@ -873,7 +902,9 @@ if(typeof callback !== 'undefined') {
         if(pair.length > 0) {
             if(pair.length > 1) {
                 log.error('This is too long..')
+                return
             }
+
             this.connection.request(
                 this.apiID,
                 this.event_ids.unsubscribe_from_market,
@@ -883,6 +914,7 @@ if(typeof callback !== 'undefined') {
                     asset_id_b
                 ]
             )
+
             this.subscription_ids.delete(pair.get(0))
             log.info("Removed market subscription: " + asset_id_a + ":" + asset_id_b)
         }
@@ -911,7 +943,11 @@ if(typeof callback !== 'undefined') {
             this.once("db.get_ticker", callback)
         }
     }
-    //get_24_volume(base, quote)
+
+    get_24_volume(base, quote) {
+
+    }
+    
     //get_order_book(base, quote, limit=50)
     //get_trade_history(base, quote, start, stop, limit=100)
     //get_trade_history_by_sequence(base, quote, start, stop, limit=100)
