@@ -37,7 +37,7 @@ api.on("open", () => {
         // })
 
         // Grab ticker price for bts:cny
-        // api.database_api.get_ticker('1.3.0', '1.3.113', result => {
+        // api.database_api.get_ticker('1.3.0', '1.3.113', false, (result) => {
         //     log.warn(result)
         // })
 
@@ -239,9 +239,23 @@ api.on("open", () => {
         //     log.warn(volume)
         // })
 
-        api.database_api.get_order_book('CNY', 'BTS', 50, orders => {
-            log.warn(orders)
-        })
+        // Get current order book for pair
+        // api.database_api.get_order_book('CNY', 'BTS', 50, orders => {
+        //     log.warn(orders)
+        // })
+        
+        // Get trade history for an asset pair
+        // api.database_api.get_trade_history(
+        //     'CNY',
+        //     'BTS',
+        //     '2018-03-02T07:57:52', // start
+        //     '2018-03-01T07:57:52', // stop
+        //     3, // limit
+        //     orders => {
+        //         log.warn(orders)
+        //     }
+        // )
+        
         
         //api.close()
     })

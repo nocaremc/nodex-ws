@@ -577,45 +577,45 @@ if(typeof callback !== 'undefined') {
         }
     }
 
-    /**
-     * Get unclaimed balance objects for base58 addresses (legacy?)
-     * @param {array} addrs array of base58 addresses?
-     * @param {function} callback 
-     */
-    get_balance_objects(addrs, callback) {
-        log.error("DB.get_balance_objects is not implemented")
-        // this.connection.request(
-        //     this.apiID,
-        //     this.event_ids.get_balance_objects,
-        //     "get_balance_objects",
-        //     [
-        //         addrs
-        //     ]
-        // )
+/**
+ * Get unclaimed balance objects for base58 addresses (legacy?)
+ * @param {array} addrs array of base58 addresses?
+ * @param {function} callback 
+ */
+get_balance_objects(addrs, callback) {
+    log.error("DB.get_balance_objects is not implemented")
+    // this.connection.request(
+    //     this.apiID,
+    //     this.event_ids.get_balance_objects,
+    //     "get_balance_objects",
+    //     [
+    //         addrs
+    //     ]
+    // )
 
-        // if(typeof callback !== 'undefined') {
-        //     this.once("db.get_balance_objects", callback)
-        // }
-    }
+    // if(typeof callback !== 'undefined') {
+    //     this.once("db.get_balance_objects", callback)
+    // }
+}
 
-    /**
-     * Get vested balances for balance objects?
-     * @param {array} objs 
-     * @param {*} callback 
-     */
-    get_vested_balances(objs, callback) {
-        log.error("DB.get_vested_balances is not implemented")
-        // this.connection.request(
-        //     this.apiID,
-        //     this.event_ids.get_vested_balances,
-        //     "get_vested_balances",
-        //     [objs]
-        // )
+/**
+ * Get vested balances for balance objects?
+ * @param {array} objs 
+ * @param {*} callback 
+ */
+get_vested_balances(objs, callback) {
+    log.error("DB.get_vested_balances is not implemented")
+    // this.connection.request(
+    //     this.apiID,
+    //     this.event_ids.get_vested_balances,
+    //     "get_vested_balances",
+    //     [objs]
+    // )
 
-        // if(typeof callback !== 'undefined') {
-        //     this.once("db.get_vested_balances", callback)
-        // }
-    }
+    // if(typeof callback !== 'undefined') {
+    //     this.once("db.get_vested_balances", callback)
+    // }
+}
 
     /**
      * Get the vesting balances for an account
@@ -1008,7 +1008,48 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
-    //get_trade_history(base, quote, start, stop, limit=100)
+    /**
+     * Get trade history for an asset pair by symbol
+     * @param {string} base asset symbol
+     * @param {string} quote asset symbol
+     * @param {string} start end date as a unix UTC ISO formatted timestamp
+     * @param {string} stop start date as a unix UTC ISO formatted timestamp
+     * @param {integer} limit min 1, max 100
+     * @param {function} callback 
+     */
+    get_trade_history(base, quote, start, stop, limit, callback) {
+        // limit=100
+        if(typeof base !== "string" || typeof quote !== "string") {
+            log.error("db.get_order_book: Base and Quote must be strings")
+            return
+        }
+        
+        if(!limit || limit < 1) {
+            limit = 1
+        }
+
+        if(limit > 100) {
+            limit = 100
+        }
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_trade_history,
+            "get_trade_history",
+            [
+                base.toUpperCase(),
+                quote.toUpperCase(),
+                start,
+                stop,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_trade_history", callback)
+        }
+    }
+
     //get_trade_history_by_sequence(base, quote, start, stop, limit=100)
 
 
@@ -1296,6 +1337,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
                 
                 // This may be a subscription
                 if(data.method === 'notice') {
+                    
                     let id = data.params[0]
 
                     // Emit event if subscription key found
