@@ -250,7 +250,19 @@ api.on("open", () => {
         //     'BTS',
         //     '2018-03-02T07:57:52', // start
         //     '2018-03-01T07:57:52', // stop
-        //     3, // limit
+        //     10, // limit
+        //     orders => {
+        //         log.warn(orders)
+        //     }
+        // )
+
+        // Get trade history, using a history sequence (from a history key) value
+        // api.database_api.get_trade_history_by_sequence(
+        //     'CNY',
+        //     'BTS',
+        //     10, // start
+        //     '2018-03-01T07:57:52', // stop
+        //     10, // limit
         //     orders => {
         //         log.warn(orders)
         //     }

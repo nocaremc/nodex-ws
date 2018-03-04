@@ -1010,9 +1010,40 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
-    // get_trade_history_by_sequence(base, quote, start, stop, limit) {
-    //     limit = limit.clamp(1, 100)
-    // }
+    /**
+     * Get trade history by history sequence for an asset pair by symbol
+     * @param {string} base asset symbol
+     * @param {string} quote asset symbol
+     * @param {integer} start sequence value for a history_key
+     * @param {string} stop start date as a unix UTC ISO formatted timestamp
+     * @param {integer} limit min 1, max 100
+     * @param {function} callback 
+     */
+    get_trade_history_by_sequence(base, quote, start, stop, limit, callback) {
+        if(typeof base !== "string" || typeof quote !== "string") {
+            log.error("db.get_trade_history_by_sequence: Base and Quote must be strings")
+            return
+        }
+
+        limit = limit.clamp(1, 100)
+
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_trade_history_by_sequence,
+            "get_trade_history_by_sequence",
+            [
+                base.toUpperCase(),
+                quote.toUpperCase(),
+                start,
+                stop,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_trade_history_by_sequence", callback)
+        }
+    }
 
 
     
