@@ -1,6 +1,7 @@
 const Dict = require('collections/dict')
 const Map = require('collections/map')
 const log = require('./Log.js')
+require('./Util.js')
 //const Balances = require('./graphene/Balances.js')
 const Asset = require('./graphene/Asset.js')
 let map = new WeakMap()
@@ -487,14 +488,11 @@ if(typeof callback !== 'undefined') {
     /**
      * Search for accounts like given account name/string
      * @param {string} name 
-     * @param {integer} limit returned results MAX 1000, default 100
+     * @param {integer} limit returned results MAX 1000, default 1
      * @param {function} callback 
      */
     lookup_accounts(name, limit, callback) {
-        // Limit should exist, be positive and less than 1k
-        if(!limit || limit < 0 || limit > 1000) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 1000)
 
         this.connection.request(
             this.apiID,
@@ -666,12 +664,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     list_assets(symbol, limit, callback) {
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-        else if(limit > 100) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 100)
 
         this.connection.request(
             this.apiID,
@@ -722,12 +715,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_limit_orders(asset_id_a, asset_id_b, limit, callback) {
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-        else if(limit > 100) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 100)
 
         this.connection.request(
             this.apiID,
@@ -752,12 +740,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_call_orders(asset_id, limit, callback) {
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-        else if(limit > 100) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 100)
 
         this.connection.request(
             this.apiID,
@@ -781,12 +764,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_settle_orders(asset_id, limit, callback) {
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-        else if(limit > 100) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 100)
 
         this.connection.request(
             this.apiID,
@@ -824,12 +802,7 @@ get_vested_balances(objs, callback) {
 get_collateral_bids(asset_id, limit, start, callback) {
     log.error("db.get_collateral_bids is not yet implemented")
     /*
-    if(!limit || limit < 1) {
-        limit = 1
-    }
-    else if(limit > 100) {
-        limit = 100
-    }
+    limit = limit.clamp(1, 100)
 
     if(!start) {
         start = 0
@@ -984,13 +957,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
             return
         }
         
-        if(!limit || limit < 1) {
-            limit = 1
-        }
-
-        if(limit > 50) {
-            limit = 50
-        }
+        limit = limit.clamp(1, 50)
 
         this.connection.request(
             this.apiID,
@@ -1018,19 +985,12 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {function} callback 
      */
     get_trade_history(base, quote, start, stop, limit, callback) {
-        // limit=100
         if(typeof base !== "string" || typeof quote !== "string") {
             log.error("db.get_order_book: Base and Quote must be strings")
             return
         }
-        
-        if(!limit || limit < 1) {
-            limit = 1
-        }
 
-        if(limit > 100) {
-            limit = 100
-        }
+        limit = limit.clamp(1, 100)
 
         this.connection.request(
             this.apiID,
@@ -1050,7 +1010,9 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
-    //get_trade_history_by_sequence(base, quote, start, stop, limit=100)
+    // get_trade_history_by_sequence(base, quote, start, stop, limit) {
+    //     limit = limit.clamp(1, 100)
+    // }
 
 
     
