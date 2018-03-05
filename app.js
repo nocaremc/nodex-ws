@@ -287,6 +287,26 @@ api.on("open", () => {
         //     log.info(count)
         // })
 
+        // Get committee member objects by ids
+        // api.database_api.get_committee_members(['1.5.13'], members => {
+        //     log.warn(members)
+        // })
+
+        // Get committee member by committee member account id
+        // api.database_api.get_committee_member_by_account('1.2.21106', member => {
+        //     log.error(member)
+        // })
+        
+        // Search committee members by account name
+        // api.database_api.lookup_committee_member_accounts('fav', 50, count => {
+        //     log.info(count)
+        // })
+
+        // Get a total count of committee memebers
+        // api.database_api.get_committee_count(count => {
+        //     log.info(count)
+        // })
+
         //api.close()
     })
 })

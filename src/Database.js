@@ -92,7 +92,11 @@ class Database {
                     'get_witness_by_account',
                     'lookup_witness_accounts',
                     'get_witness_count',
-
+                    // Committee members
+                    'get_committee_members',
+                    'get_committee_member_by_account',
+                    'lookup_committee_member_accounts',
+                    'get_committee_count',
                     
                     
                     
@@ -115,12 +119,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Committee members
-    get_committee_members(committee_member_ids)
-    get_committee_member_by_account(account_id)
-    lookup_committee_member_accounts(name, limit)
-    get_committee_count()
 
     - Workers
     get_all_workers()
@@ -1085,7 +1083,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
     /**
      * Search for witnesses by account name
      * @param {string} name 
-     * @param {integer} limit 
+     * @param {integer} limit min 1, max 1000
      * @param {function} callback 
      */
     lookup_witness_accounts(name, limit, callback) {
@@ -1123,7 +1121,86 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
+    //
+    // Committee members
+    //
+
+    /**
+     * Get committee members by their member ids
+     * @param {array} member_ids committee member ids
+     * @param {function} callback 
+     */
+    get_committee_members(member_ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_committee_members,
+            "get_committee_members",
+            [member_ids]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_committee_members", callback)
+        }
+    }
+
+    /**
+     * Get committee member id by owner account id
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
+    get_committee_member_by_account(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_committee_member_by_account,
+            "get_committee_member_by_account",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_committee_member_by_account", callback)
+        }
+    }
+
+    /**
+     * Search committee members by account name, returning committee member ids
+     * @param {string} name 
+     * @param {integer} limit min 1, max 1000
+     * @param {function} callback 
+     */
+    lookup_committee_member_accounts(name, limit, callback) {
+        limit = clamp(limit, 1, 1000)
+        
+        this.connection.request(
+            this.apiID,
+            this.event_ids.lookup_committee_member_accounts,
+            "lookup_committee_member_accounts",
+            [
+                name,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_committee_member_accounts", callback)
+        }
+    }
     
+    /**
+     * Get a total count of committee members
+     * @param {function} callback 
+     */
+    get_committee_count(callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_committee_count,
+            "get_committee_count",
+            []
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_committee_count", callback)
+        }
+    }
 
     /**
      * @return {Connection} Connection instance
@@ -1418,6 +1495,26 @@ get_collateral_bids(asset_id, limit, start, callback) {
 
             case events.get_witness_count:
                 this.emit("db.get_witness_count", data.result)
+            break;
+
+            //
+            // Committee Members
+            //
+
+            case events.get_committee_members:
+                this.emit("db.get_committee_members", data.result)
+            break;
+
+            case events.get_committee_member_by_account:
+                this.emit("db.get_committee_member_by_account", data.result)
+            break;
+
+            case events.lookup_committee_member_accounts:
+                this.emit("db.lookup_committee_member_accounts", data.result)
+            break;
+
+            case events.get_committee_count:
+                this.emit("db.get_committee_count", data.result)
             break;
 
 
