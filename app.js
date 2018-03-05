@@ -296,7 +296,7 @@ api.on("open", () => {
         // api.database_api.get_committee_member_by_account('1.2.21106', member => {
         //     log.error(member)
         // })
-        
+
         // Search committee members by account name
         // api.database_api.lookup_committee_member_accounts('fav', 50, count => {
         //     log.info(count)
@@ -306,6 +306,20 @@ api.on("open", () => {
         // api.database_api.get_committee_count(count => {
         //     log.info(count)
         // })
+
+        // Get list of all workers
+        // api.database_api.get_all_workers(workers => {
+        //     log.warn(workers)
+        // })
+
+        // Get all workers associated with account_id
+        // api.database_api.get_workers_by_account(
+        //     '1.2.364315',
+        //     workers => log.warn(workers)
+        // )
+
+        // Get count of workers
+        //api.database_api.get_worker_count(count => log.warn(count))
 
         //api.close()
     })

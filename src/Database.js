@@ -97,8 +97,10 @@ class Database {
                     'get_committee_member_by_account',
                     'lookup_committee_member_accounts',
                     'get_committee_count',
-                    
-                    
+                    // Workers
+                    'get_all_workers',
+                    'get_workers_by_account',
+                    'get_worker_count',
                     
                 ]
             ),
@@ -119,11 +121,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Workers
-    get_all_workers()
-    get_workers_by_account(account_id)
-    get_worker_count()
 
     - Votes
     lookup_vote_ids(votes)
@@ -1202,6 +1199,62 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
+    //
+    // Workers
+    //
+
+    /**
+     * Get a list of all workers
+     * @param {function} callback 
+     */
+    get_all_workers(callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_all_workers,
+            "get_all_workers",
+            []
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_all_workers", callback)
+        }
+    }
+
+    /**
+     * Get all workers associated with account_id
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
+    get_workers_by_account(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_workers_by_account,
+            "get_workers_by_account",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_workers_by_account", callback)
+        }
+    }
+
+    /**
+     * Get a total count of workers
+     * @param {function} callback 
+     */
+    get_worker_count(callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_worker_count,
+            "get_worker_count",
+            []
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_worker_count", callback)
+        }
+    }
+
     /**
      * @return {Connection} Connection instance
      */
@@ -1515,6 +1568,21 @@ get_collateral_bids(asset_id, limit, start, callback) {
 
             case events.get_committee_count:
                 this.emit("db.get_committee_count", data.result)
+            break;
+
+            //
+            // Workers
+            //
+            case events.get_all_workers:
+                this.emit("db.get_all_workers", data.result)
+            break;
+
+            case events.get_workers_by_account:
+                this.emit("db.get_workers_by_account", data.result)
+            break;
+
+            case events.get_worker_count:
+                this.emit("db.get_worker_count", data.result)
             break;
 
 
