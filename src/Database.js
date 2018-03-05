@@ -56,7 +56,6 @@ class Database {
                     // Keys
                     'get_key_references',
                     'is_public_key_registered',
-
                     // Accounts
                     'get_accounts',
                     'get_full_accounts',
@@ -88,7 +87,11 @@ class Database {
                     'get_order_book',
                     'get_trade_history',
                     'get_trade_history_by_sequence',
-
+                    // Witnesses
+                    'get_witnesses',
+                    'get_witness_by_account',
+                    'lookup_witness_accounts',
+                    'get_witness_count',
 
                     
                     
@@ -112,12 +115,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Witnesses
-    get_witnesses(witness_ids)
-    get_witness_by_account(account_id)
-    lookup_witness_accounts(name, limit)
-    get_witness_count()
 
     - Committee members
     get_committee_members(committee_member_ids)
@@ -492,7 +489,7 @@ if(typeof callback !== 'undefined') {
      * @param {function} callback 
      */
     lookup_accounts(name, limit, callback) {
-        limit = limit.clamp(1, 1000)
+        limit = clamp(limit, 1, 1000)
 
         this.connection.request(
             this.apiID,
@@ -639,7 +636,7 @@ get_vested_balances(objs, callback) {
 
     /**
      * Return a list of assets by asset_ids
-     * @param {Array} asset_ids 
+     * @param {array} asset_ids 
      * @param {function} callback 
      */
     get_assets(asset_ids, callback) {
@@ -664,7 +661,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     list_assets(symbol, limit, callback) {
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -715,7 +712,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_limit_orders(asset_id_a, asset_id_b, limit, callback) {
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -740,7 +737,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_call_orders(asset_id, limit, callback) {
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -764,7 +761,7 @@ get_vested_balances(objs, callback) {
      * @param {function} callback 
      */
     get_settle_orders(asset_id, limit, callback) {
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -802,7 +799,7 @@ get_vested_balances(objs, callback) {
 get_collateral_bids(asset_id, limit, start, callback) {
     log.error("db.get_collateral_bids is not yet implemented")
     /*
-    limit = limit.clamp(1, 100)
+    limit = clamp(limit, 1, 100)
 
     if(!start) {
         start = 0
@@ -957,7 +954,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
             return
         }
         
-        limit = limit.clamp(1, 50)
+        limit = clamp(limit, 1, 50)
 
         this.connection.request(
             this.apiID,
@@ -990,7 +987,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
             return
         }
 
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -1025,7 +1022,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
             return
         }
 
-        limit = limit.clamp(1, 100)
+        limit = clamp(limit, 1, 100)
 
         this.connection.request(
             this.apiID,
@@ -1045,8 +1042,86 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
+    //
+    // Witnesses
+    //
 
-    
+    /**
+     * Get a list of witnesses by witness ids
+     * @param {array} witness_ids 
+     * @param {function} callback 
+     */
+    get_witnesses(witness_ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_witnesses,
+            "get_witnesses",
+            [witness_ids]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_witnesses", callback)
+        }
+    }
+
+    /**
+     * Get a witness id by user's account id
+     * @param {string} account_id 
+     * @param {function} callback 
+     */
+    get_witness_by_account(account_id, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_witness_by_account,
+            "get_witness_by_account",
+            [account_id]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_witness_by_account", callback)
+        }
+    }
+
+    /**
+     * Search for witnesses by account name
+     * @param {string} name 
+     * @param {integer} limit 
+     * @param {function} callback 
+     */
+    lookup_witness_accounts(name, limit, callback) {
+        limit = clamp(limit, 1, 1000)
+        
+        this.connection.request(
+            this.apiID,
+            this.event_ids.lookup_witness_accounts,
+            "lookup_witness_accounts",
+            [
+                name,
+                limit
+            ]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_witness_accounts", callback)
+        }
+    }
+
+    /**
+     * Get a total count of witnesses
+     * @param {function} callback 
+     */
+    get_witness_count(callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_witness_count,
+            "get_witness_count",
+            []
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_witness_count", callback)
+        }
+    }
 
     
 
@@ -1324,6 +1399,27 @@ get_collateral_bids(asset_id, limit, start, callback) {
             case events.get_trade_history_by_sequence:
                 this.emit("db.get_trade_history_by_sequence", data.result)
             break;
+
+            //
+            // Witnesses
+            //
+            
+            case events.get_witnesses:
+                this.emit("db.get_witnesses", data.result)
+            break;
+
+            case events.get_witness_by_account:
+                this.emit("db.get_witness_by_account", data.result)
+            break;
+
+            case events.lookup_witness_accounts:
+                this.emit("db.lookup_witness_accounts", data.result)
+            break;
+
+            case events.get_witness_count:
+                this.emit("db.get_witness_count", data.result)
+            break;
+
 
             default:
                 //log.info("Unkown event coming")

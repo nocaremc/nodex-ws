@@ -267,8 +267,26 @@ api.on("open", () => {
         //         log.warn(orders)
         //     }
         // )
-        
-        
+
+        // Get a witness id by their account_id (in.abit)
+        // api.database_api.get_witness_by_account('1.2.35248', result => {
+        //     log.warn(result)
+        // })
+        // Get a witness object by its witness id (in.abit)
+        // api.database_api.get_witnesses(['1.6.35'], witnesses => {
+        //     log.error(witnesses)
+        // })
+
+        // Search for a witness id by their witness account name
+        // api.database_api.lookup_witness_accounts('in.abit', 5, accounts => {
+        //     log.error(accounts)
+        // })
+
+        // Get a count of witnesses
+        // api.database_api.get_witness_count(count => {
+        //     log.info(count)
+        // })
+
         //api.close()
     })
 })

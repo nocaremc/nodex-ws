@@ -1,20 +1,18 @@
 /**
  * Forces a number to given boundaries if outside them
+ * @param {number} value number to constrain
  * @param {number} min 
  * @param {number} max 
  */
-Number.prototype.clamp = (min, max) => {
-    if(typeof this !== "number") {
+clamp = (value, min, max) => {
+    
+    if(value < min) {
         return min
     }
 
-    if(this < min) {
-        return min
-    }
-
-    if(this > max) {
+    if(value > max) {
         return max
     }
 
-    return this
+    return value
 }
