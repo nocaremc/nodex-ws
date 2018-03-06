@@ -321,6 +321,9 @@ api.on("open", () => {
         // Get count of workers
         //api.database_api.get_worker_count(count => log.warn(count))
 
+        // lookup objects these votes are for
+        //api.database_api.lookup_vote_ids([], result => log.warn(result))
+
         //api.close()
     })
 })

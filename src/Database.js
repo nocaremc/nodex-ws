@@ -101,7 +101,8 @@ class Database {
                     'get_all_workers',
                     'get_workers_by_account',
                     'get_worker_count',
-                    
+                    // Votes
+                    'lookup_vote_ids',
                 ]
             ),
             subscription_ids: new Map()
@@ -121,9 +122,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Votes
-    lookup_vote_ids(votes)
 
     - Authority / Validation
     get_transaction_hex(transaction)
@@ -1255,6 +1253,28 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
+    //
+    // Votes
+    //
+
+    /**
+     * Find the objects the given vote_ids are for
+     * @param {array} vote_ids 
+     * @param {function} callback 
+     */
+    lookup_vote_ids(vote_ids, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.lookup_vote_ids,
+            "lookup_vote_ids",
+            [vote_ids]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.lookup_vote_ids", callback)
+        }
+    }
+
     /**
      * @return {Connection} Connection instance
      */
@@ -1584,6 +1604,15 @@ get_collateral_bids(asset_id, limit, start, callback) {
             case events.get_worker_count:
                 this.emit("db.get_worker_count", data.result)
             break;
+
+            //
+            // Votes
+            //
+
+            case events.lookup_vote_ids:
+                this.emit('db.lookup_vote_ids', data.result)
+            break;
+
 
 
             default:
