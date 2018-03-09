@@ -15,7 +15,7 @@ api.on("open", () => {
     api.login(process.env.DEX_USER, process.env.DEX_PASS, result => {
         //log.info("login was " + result)
     })
-    api.database(database => {
+    api.database(async database => {
     
     // Here we'll wait for the db api to be initialized
     
@@ -323,7 +323,15 @@ api.on("open", () => {
 
         // lookup objects these votes are for
         //api.database_api.lookup_vote_ids([], result => log.warn(result))
-
+        
+        //api.database_api.get_transaction_hex(1, hex => log.warn(hex))
+        
+        // api.database_api.get_margin_positions(
+        //     process.env.DEX_USER_ID,
+        //     margins => log.warn(margins)
+        // )
+        let x = await api.database_api.get_margin_positions(process.env.DEX_USER_ID)
+        //console.log(x)
         //api.close()
     })
 })

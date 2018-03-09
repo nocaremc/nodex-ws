@@ -103,6 +103,15 @@ class Database {
                     'get_worker_count',
                     // Votes
                     'lookup_vote_ids',
+                    // Authority / Validation
+                    'get_transaction_hex',
+                    'get_required_signatures',
+                    'get_potential_signatures',
+                    'get_potential_address_signatures',
+                    'verify_authority',
+                    'verify_account_authority',
+                    'validate_transaction',
+                    'get_required_fees',
                 ]
             ),
             subscription_ids: new Map()
@@ -122,16 +131,6 @@ class Database {
     set_pending_transaction_callback(callback(variant))
     set_block_applied_callback(callback(block_id))
     cancel_all_subscriptions()
-
-    - Authority / Validation
-    get_transaction_hex(transaction)
-    get_required_signatures(transaction, available_keys)
-    get_potential_signatures(transaction)
-    get_potential_address_signatures(transaction)
-    verify_authority(transaction)
-    verify_account_authority(name_or_id, signers)
-    validate_transaction(transaction)
-    get_required_fees(operations, asset_id)
 
     - Proposed transactions
     get_proposed_transactions(account_id)
@@ -776,17 +775,18 @@ get_vested_balances(objs, callback) {
      * @param {string} account_id 
      * @param {function} callback 
      */
-    get_margin_positions(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_margin_positions,
-            "get_margin_positions",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_margin_positions", callback)
-        }
+    async get_margin_positions(account_id) {
+        const data = await new Promise(resolve => {
+            
+            this.once("db.get_margin_positions", resolve)
+            this.connection.request(
+                this.apiID,
+                this.event_ids.get_margin_positions,
+                "get_margin_positions",
+                [account_id]
+            )
+        })
+        return data
     }
 
 get_collateral_bids(asset_id, limit, start, callback) {
@@ -1275,6 +1275,44 @@ get_collateral_bids(asset_id, limit, start, callback) {
         }
     }
 
+    //
+    // Authority / Validation
+    //
+
+    get_transaction_hex(transaction, callback) {
+        this.connection.request(
+            this.apiID,
+            this.event_ids.get_transaction_hex,
+            "get_transaction_hex",
+            [transaction]
+        )
+
+        if(typeof callback !== 'undefined') {
+            this.once("db.get_transaction_hex", callback)
+        }
+    }
+    get_required_signatures(transaction, available_keys, callback) {
+
+    }
+    get_potential_signatures(transaction, callback) {
+
+    }
+    get_potential_address_signatures(transaction, callback) {
+
+    }
+    verify_authority(transaction, callback) {
+
+    }
+    verify_account_authority(name_or_id, signers, callback) {
+
+    }
+    validate_transaction(transaction, callback) {
+
+    }
+    get_required_fees(operations, asset_id, callback) {
+
+    }
+
     /**
      * @return {Connection} Connection instance
      */
@@ -1612,7 +1650,41 @@ get_collateral_bids(asset_id, limit, start, callback) {
             case events.lookup_vote_ids:
                 this.emit('db.lookup_vote_ids', data.result)
             break;
+            
+            //
+            // Authority / Validation
+            //
+            case events.get_transaction_hex:
+                this.emit('db.get_transaction_hex', data.result)
+            break;
 
+            case events.get_required_signatures:
+                this.emit('db.get_required_signatures', data.result)
+            break;
+
+            case events.get_potential_signatures:
+                this.emit('db.get_potential_signatures', data.result)
+            break;
+
+            case events.get_potential_address_signatures:
+                this.emit('db.get_potential_address_signatures', data.result)
+            break;
+
+            case events.verify_authority:
+                this.emit('db.verify_authority', data.result)
+            break;
+
+            case events.verify_account_authority:
+                this.emit('db.verify_account_authority', data.result)
+            break;
+
+            case events.validate_transaction:
+                this.emit('db.validate_transaction', data.result)
+            break;
+
+            case events.get_required_fees:
+                this.emit('db.get_required_fees', data.result)
+            break;
 
 
             default:
