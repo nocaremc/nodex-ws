@@ -156,19 +156,9 @@ if(typeof callback !== 'undefined') {
     /**
      * Get objects for ids
      * @param {array} ids array of object ids
-     * @param {function} callback 
      */
-    get_objects(ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_objects,
-            "get_objects",
-            [ids]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_objects", callback)
-        }
+    async get_objects(ids) {
+        return await this.callWrapper("get_objects", [ids])
     }
 
     //
@@ -178,77 +168,37 @@ if(typeof callback !== 'undefined') {
     /**
      * Get a block header
      * @param {integer} block_num block id
-     * @param {function} callback 
      */
-    get_block_header(block_num, callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_block_header,
-            "get_block_header",
-            [block_num]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_block_header", callback)
-        }
+    async get_block_header(block_num) {
+        return await this.callWrapper("get_block_header", [block_num])
     }
 
     /**
      * Get multiple block's headers
      * @param {array} block_nums array of block ids
-     * @param {function} callback 
      */
-    get_block_header_batch(block_nums, callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_block_header_batch,
-            "get_block_header_batch",
-            [block_nums]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_block_header_batch", callback)
-        }
+    async get_block_header_batch(block_nums) {
+        return await this.callWrapper("get_block_header_batch", [block_nums])
     }
 
     /**
      * Get a block by its id
      * @param {integer} block_num block id
-     * @param {function} callback 
      */
-    get_block(block_num, callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_block,
-            "get_block",
-            [block_num]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_block", callback)
-        }
+    async get_block(block_num) {
+        return await this.callWrapper("get_block", [block_num])
     }
 
     /**
      * Get a specific transaction from a block
      * @param {integer} block_num block id
      * @param {integer} transaction_id signed transaction id in given block id
-     * @param {function} callback 
      */
-    get_transaction(block_num, transaction_id, callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_transaction,
-            "get_transaction",
-            [
-                block_num,
-                transaction_id
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_transaction", callback)
-        }
+    async get_transaction(block_num, transaction_id) {
+        return await this.callWrapper("get_transaction", [
+            block_num,
+            transaction_id
+        ])
     }
 
     //
@@ -257,83 +207,38 @@ if(typeof callback !== 'undefined') {
 
     /**
      * Get chain properties object
-     * @param {function} callback 
      */
-    get_chain_properties(callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_chain_properties,
-            "get_chain_properties",
-            []
-        )
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_chain_properties", callback)
-        }
+    async get_chain_properties() {
+        return await this.callWrapper("get_chain_properties", [])
     }
 
     /**
      * Get `current` global properties object
-     * @param {function} callback 
      */
-    get_global_properties(callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_global_properties,
-            "get_global_properties",
-            []
-        )
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_global_properties", callback)
-        }
+    async get_global_properties() {
+        return await this.callWrapper("get_global_properties", [])
     }
 
     /**
      * Get compiled constants
-     * @param {function} callback 
      */
-    get_config(callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_config,
-            "get_config",
-            []
-        )
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_config", callback)
-        }
+    async get_config() {
+        return await this.callWrapper("get_config", [])
     }
 
     /**
      * Get the chain ID
-     * @param {function} callback 
      */
-    get_chain_id(callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_chain_id,
-            "get_chain_id",
-            []
-        )
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_chain_id", callback)
-        }
+    async get_chain_id() {
+        return await this.callWrapper("get_chain_id", [])
     }
 
     /**
      * Get dynamic global properties?
      * What exactly is this?
-     * @param {function} callback 
      */
-    get_dynamic_global_properties(callback) {
-        this.connection.request(
-            this.apiD,
-            this.event_ids.get_dynamic_global_properties,
-            "get_dynamic_global_properties",
-            []
-        )
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_dynamic_global_properties", callback)
-        }
+    async get_dynamic_global_properties() {
+        return await this.callWrapper("get_dynamic_global_properties", [])
     }
 
     //
@@ -343,37 +248,17 @@ if(typeof callback !== 'undefined') {
     /**
      * Get account IDs with public keys
      * @param {array} keys public keys as strings
-     * @param {function} callback 
      */
-    get_key_references(keys, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_key_references,
-            "get_key_references",
-            [keys]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_key_references", callback)
-        }
+    async get_key_references(keys) {
+        return await this.callWrapper("get_key_references", [keys])
     }
 
     /**
      * Is an account id(other?) associated with this public key?
      * @param {string} key public key
-     * @param {function} callback 
      */
-    is_public_key_registered(key, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.is_public_key_registered,
-            "is_public_key_registered",
-            [key]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.is_public_key_registered", callback)
-        }
+    async is_public_key_registered(key) {
+        return await this.callWrapper("is_public_key_registered", [key])
     }
 
     //
@@ -383,136 +268,63 @@ if(typeof callback !== 'undefined') {
     /**
      * Get account objects by list of account ids
      * @param {array} account_ids 
-     * @param {function} callback 
      */
-    get_accounts(account_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_accounts,
-            "get_accounts",
-            [account_ids]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_accounts", callback)
-        }
+    async get_accounts(account_ids) {
+        return await this.callWrapper("get_accounts", [account_ids])
     }
 
     /**
      * Get "full accounts" with a list of ids or names
      * @param {array} name_or_ids 
      * @param {boolean} subscribe 
-     * @param {function} callback 
      */
-    get_full_accounts(name_or_ids, subscribe, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_full_accounts,
-            "get_full_accounts",
-            [
-                name_or_ids,
-                subscribe
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_full_accounts", callback)
-        }
+    async get_full_accounts(name_or_ids, subscribe) {
+        return await this.callWrapper("get_full_accounts", [
+            name_or_ids,
+            subscribe
+        ])
     }
 
     /**
      * Return an account object by username
      * @param {string} name account name
-     * @param {function} callback 
      */
-    get_account_by_name(name, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_account_by_name,
-            "get_account_by_name",
-            [name]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_account_by_name", callback)
-        }
+    async get_account_by_name(name) {
+        return await this.callWrapper("get_account_by_name", [name])
     }
 
     /**
      * Get accounts that refer to this account in their owner/active permissions
      * @param {string} account_id 
-     * @param {function} callback 
      */
-    get_account_references(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_account_references,
-            "get_account_references",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_account_references", callback)
-        }
+    async get_account_references(account_id) {
+        return await this.callWrapper("get_account_references", [account_id])
     }
 
     /**
      * Look up a list of accounts by their names
      * @param {array} names account names
-     * @param {function} callback 
      */
-    lookup_account_names(names, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_account_names,
-            "lookup_account_names",
-            [names]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_account_names", callback)
-        }
+    async lookup_account_names(names) {
+        return await this.callWrapper("lookup_account_names", [names])
     }
 
     /**
      * Search for accounts like given account name/string
      * @param {string} name 
      * @param {integer} limit returned results MAX 1000, default 1
-     * @param {function} callback 
      */
-    lookup_accounts(name, limit, callback) {
+    async lookup_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_accounts,
-            "lookup_accounts",
-            [
-                name,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_accounts", callback)
-        }
+        return await this.callWrapper("lookup_accounts", [name, limit])
     }
 
     /**
      * Get a total count of accounts
-     * @param {function} callback 
      */
-    get_account_count(callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_account_count,
-            "get_account_count",
-            []
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_account_count", callback)
-        }
+    async get_account_count() {
+        return await this.callWrapper("get_account_count", [])
     }
 
     //
@@ -523,103 +335,48 @@ if(typeof callback !== 'undefined') {
      * Check account balances
      * @param {string} account_id 
      * @param {array} assets - asset ids
-     * @param {function} callback 
      */
-    get_account_balances(account_id, assets, callback) {
+    async get_account_balances(account_id, assets) {
         // LATER: error check asset ids... as a start
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_account_balances,
-            "get_account_balances",
-            [
-                account_id,
-                assets
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_account_balances", callback)
-        }
+        return await this.callWrapper("get_account_balances", [account_id, assets])
     }
     
     /**
      * Get a specific account's balances for specified assets
      * @param {string} name account name
      * @param {array} asset_ids 
-     * @param {function} callback 
      */
-    get_named_account_balances(name, asset_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_named_account_balances,
-            "get_named_account_balances",
-            [
-                name,
-                asset_ids
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_named_account_balances", callback)
-        }
+    async get_named_account_balances(name, asset_ids) {
+        return await this.callWrapper("get_named_account_balances", [
+            name,
+            asset_ids
+        ])
     }
 
-/**
- * Get unclaimed balance objects for base58 addresses (legacy?)
- * @param {array} addrs array of base58 addresses?
- * @param {function} callback 
- */
-get_balance_objects(addrs, callback) {
-    log.error("DB.get_balance_objects is not implemented")
-    // this.connection.request(
-    //     this.apiID,
-    //     this.event_ids.get_balance_objects,
-    //     "get_balance_objects",
-    //     [
-    //         addrs
-    //     ]
-    // )
+    /**
+     * Get unclaimed balance objects for base58 addresses (legacy?)
+     * @param {array} addrs array of base58 addresses?
+     */
+    async get_balance_objects(addrs) {
+        log.error("DB.get_balance_objects is not tested")
+        return await this.callWrapper("get_balance_objects", [addrs])
+    }
 
-    // if(typeof callback !== 'undefined') {
-    //     this.once("db.get_balance_objects", callback)
-    // }
-}
-
-/**
- * Get vested balances for balance objects?
- * @param {array} objs 
- * @param {*} callback 
- */
-get_vested_balances(objs, callback) {
-    log.error("DB.get_vested_balances is not implemented")
-    // this.connection.request(
-    //     this.apiID,
-    //     this.event_ids.get_vested_balances,
-    //     "get_vested_balances",
-    //     [objs]
-    // )
-
-    // if(typeof callback !== 'undefined') {
-    //     this.once("db.get_vested_balances", callback)
-    // }
-}
+    /**
+     * Get vested balances for balance objects?
+     * @param {array} objs 
+     */
+    async get_vested_balances(objs) {
+        log.error("DB.get_vested_balances is not tested")
+        return await this.callWrapper("get_vested_balances", [objs])
+    }
 
     /**
      * Get the vesting balances for an account
      * @param {string} account_id 
-     * @param {function} callback 
      */
-    get_vesting_balances(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_vesting_balances,
-            "get_vesting_balances",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_vesting_balances", callback)
-        }
+    async get_vesting_balances(account_id) {
+        return await this.callWrapper("get_vesting_balances", [account_id])
     }
 
     //
@@ -629,67 +386,30 @@ get_vested_balances(objs, callback) {
     /**
      * Return a list of assets by asset_ids
      * @param {array} asset_ids 
-     * @param {function} callback 
      */
-    get_assets(asset_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_assets,
-            "get_assets",
-            [
-                asset_ids
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_assets", callback)
-        }
+    async get_assets(asset_ids) {
+        return await this.callWrapper("get_assets", [asset_ids])
     }
 
     /**
      * Search for an asset by its symbol
      * @param {string} symbol asset symbol
      * @param {integer} limit result limit. max 100
-     * @param {function} callback 
      */
-    list_assets(symbol, limit, callback) {
+    async list_assets(symbol, limit) {
         limit = clamp(limit, 1, 100)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.list_assets,
-            "list_assets",
-            [
-                symbol,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.list_assets", callback)
-        }
+        return await this.callWrapper("list_assets", [symbol, limit])
     }
     
     /**
      * Get a list of assets using a list of symbols
      * @param {array} symbols array asset symbol names
-     * @param {function} callback 
      */
-    lookup_asset_symbols(symbols, callback) {
+    async lookup_asset_symbols(symbols) {
         // We could/should check local asset collection first.
         // Then we could build and emit a replica locally
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_asset_symbols,
-            "lookup_asset_symbols",
-            [
-                JSON.parse(symbols)
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_asset_symbols", callback)
-        }
+        return await this.callWrapper("lookup_asset_symbols", [JSON.parse(symbols)])
     }
 
     //
@@ -701,136 +421,79 @@ get_vested_balances(objs, callback) {
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
      * @param {int} limit - Maximum of 100, Default 1
-     * @param {function} callback 
      */
-    get_limit_orders(asset_id_a, asset_id_b, limit, callback) {
+    async get_limit_orders(asset_id_a, asset_id_b, limit) {
         limit = clamp(limit, 1, 100)
-
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_limit_orders,
-            "get_limit_orders",
-            [
-                asset_id_a,
-                asset_id_b,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_limit_orders", callback)
-        }
+        
+        return await this.callWrapper("get_limit_orders", [
+            asset_id_a,
+            asset_id_b,
+            limit
+        ])
     }
 
     /**
      * Get call orders for an asset by id
      * @param {string} asset_id 
      * @param {integer} limit Max 100, min 1
-     * @param {function} callback 
      */
-    get_call_orders(asset_id, limit, callback) {
+    async get_call_orders(asset_id, limit) {
         limit = clamp(limit, 1, 100)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_call_orders,
-            "get_call_orders",
-            [
-                asset_id,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_call_orders", callback)
-        }
+        return await this.callWrapper("get_call_orders", [asset_id, limit])
     }
 
     /**
      * Get settlement orders for an asset by id
      * @param {string} asset_id 
      * @param {integer} limit Max 100, min 1
-     * @param {function} callback 
      */
-    get_settle_orders(asset_id, limit, callback) {
+    async get_settle_orders(asset_id, limit) {
         limit = clamp(limit, 1, 100)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_settle_orders,
-            "get_settle_orders",
-            [
-                asset_id,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_settle_orders", callback)
-        }
+        return await this.callWrapper("get_settle_orders", [asset_id, limit])
     }
 
     /**
      * Get margin positions for an account by id
      * @param {string} account_id 
-     * @param {function} callback 
      */
     async get_margin_positions(account_id) {
-        const data = await new Promise(resolve => {
-            
-            this.once("db.get_margin_positions", resolve)
-            this.connection.request(
-                this.apiID,
-                this.event_ids.get_margin_positions,
-                "get_margin_positions",
-                [account_id]
-            )
-        })
-        return data
+        return await this.callWrapper("get_margin_positions", [account_id])
     }
 
-get_collateral_bids(asset_id, limit, start, callback) {
-    log.error("db.get_collateral_bids is not yet implemented")
-    /*
-    limit = clamp(limit, 1, 100)
+    async get_collateral_bids(asset_id, limit, start) {
+        log.error("db.get_collateral_bids is not tested")
 
-    if(!start) {
-        start = 0
-    }
+        limit = clamp(limit, 1, 100)
 
-    this.connection.request(
-        this.apiID,
-        this.event_ids.get_collateral_bids,
-        "get_collateral_bids",
-        [
+        if(!start) {
+            start = 0
+        }
+        return await this.callWrapper("get_margin_positions", [
             asset_id,
             limit,
             start
-        ]
-    )
-
-    if(typeof callback !== 'undefined') {
-        this.once("db.get_collateral_bids", callback)
+        ])
     }
-    */
-}
 
     /**
      * Initiate a subscription to the market for an asset pair
      * Repeatedly sends information on placed & filled orders, margins opened, etc
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
-     * @param {function} callback 
+     * CAREFULLY CHECK THIS AFTER ASYNC CHANGES
      */
-    subscribe_to_market(asset_id_a, asset_id_b, callback) {
+    async subscribe_to_market(asset_id_a, asset_id_b) {
         let key = this.event_ids.subscribe_to_market + this.subscription_ids.length + 500
         
         let value = asset_id_a + ":" + asset_id_b
 
         // Check if a subscription for this market exists
         // .... this doesn't stop the key from repeating
-        if(!this.subscription_ids.has(key)) {
-            this.subscription_ids.set(key, value)
+        const hasKey = await this.subscription_ids.has(key)
+        if(!hasKey) {
+            await this.subscription_ids.set(key, value)
 
             this.connection.request(
                 this.apiID,
@@ -856,7 +519,7 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
      */
-    unsubscribe_from_market(asset_id_a, asset_id_b) {
+    async unsubscribe_from_market(asset_id_a, asset_id_b) {
         // Determine if this asset pair is subscribed to
         let pair = this.subscription_ids.filter(item => {
             return item === asset_id_a + ":" + asset_id_b
@@ -888,50 +551,30 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {string} asset_id_base 
      * @param {string} asset_id_quote 
      * @param {boolean} skip skip order book? default false
-     * @param {function} callback 
      */
-    get_ticker(asset_id_base, asset_id_quote, skip, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_ticker,
-            "get_ticker",
-            [
-                asset_id_base,
-                asset_id_quote,
-                skip
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_ticker", callback)
-        }
+    async get_ticker(asset_id_base, asset_id_quote, skip) {
+        return await this.callWrapper("get_ticker", [
+            asset_id_base,
+            asset_id_quote,
+            skip
+        ])
     }
 
     /**
      * Get 24 hour volume of an asset pair by its symbol names
      * @param {string} base asset symbol
      * @param {string} quote asset symbol
-     * @param {function} callback 
      */
-    get_24_volume(base, quote, callback) {
+    async get_24_volume(base, quote) {
         if(typeof base !== "string" || typeof quote !== "string") {
             log.error("db.get_24_volume: Base and Quote must be strings")
-            return
+            return false
         }
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_24_volume,
-            "get_24_volume",
-            [
-                base.toUpperCase(),
-                quote.toUpperCase()
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_24_volume", callback)
-        }
+        return await this.callWrapper("get_24_volume", [
+            base.toUpperCase(),
+            quote.toUpperCase()
+        ])
     }
 
     /**
@@ -939,30 +582,20 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {string} base asset symbol
      * @param {string} quote asset symbol
      * @param {integer} limit min 1, max 50
-     * @param {function} callback 
      */
-    get_order_book(base, quote, limit, callback) {
+    async get_order_book(base, quote, limit) {
         if(typeof base !== "string" || typeof quote !== "string") {
             log.error("db.get_order_book: Base and Quote must be strings")
-            return
+            return false
         }
         
         limit = clamp(limit, 1, 50)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_order_book,
-            "get_order_book",
-            [
-                base.toUpperCase(),
-                quote.toUpperCase(),
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_order_book", callback)
-        }
+        return await this.callWrapper("get_order_book", [
+            base.toUpperCase(),
+            quote.toUpperCase(),
+            limit
+        ])
     }
 
     /**
@@ -972,32 +605,22 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {string} start end date as a unix UTC ISO formatted timestamp
      * @param {string} stop start date as a unix UTC ISO formatted timestamp
      * @param {integer} limit min 1, max 100
-     * @param {function} callback 
      */
-    get_trade_history(base, quote, start, stop, limit, callback) {
+    async get_trade_history(base, quote, start, stop, limit) {
         if(typeof base !== "string" || typeof quote !== "string") {
             log.error("db.get_order_book: Base and Quote must be strings")
-            return
+            return false
         }
 
         limit = clamp(limit, 1, 100)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_trade_history,
-            "get_trade_history",
-            [
-                base.toUpperCase(),
-                quote.toUpperCase(),
-                start,
-                stop,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_trade_history", callback)
-        }
+        return await this.callWrapper("get_trade_history", [
+            base.toUpperCase(),
+            quote.toUpperCase(),
+            start,
+            stop,
+            limit
+        ])
     }
 
     /**
@@ -1007,32 +630,22 @@ get_collateral_bids(asset_id, limit, start, callback) {
      * @param {integer} start sequence value for a history_key
      * @param {string} stop start date as a unix UTC ISO formatted timestamp
      * @param {integer} limit min 1, max 100
-     * @param {function} callback 
      */
-    get_trade_history_by_sequence(base, quote, start, stop, limit, callback) {
+    async get_trade_history_by_sequence(base, quote, start, stop, limit) {
         if(typeof base !== "string" || typeof quote !== "string") {
             log.error("db.get_trade_history_by_sequence: Base and Quote must be strings")
-            return
+            return false
         }
 
         limit = clamp(limit, 1, 100)
 
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_trade_history_by_sequence,
-            "get_trade_history_by_sequence",
-            [
-                base.toUpperCase(),
-                quote.toUpperCase(),
-                start,
-                stop,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_trade_history_by_sequence", callback)
-        }
+        return await this.callWrapper("get_trade_history_by_sequence", [
+            base.toUpperCase(),
+            quote.toUpperCase(),
+            start,
+            stop,
+            limit
+        ])
     }
 
     //
@@ -1042,78 +655,38 @@ get_collateral_bids(asset_id, limit, start, callback) {
     /**
      * Get a list of witnesses by witness ids
      * @param {array} witness_ids 
-     * @param {function} callback 
      */
-    get_witnesses(witness_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_witnesses,
-            "get_witnesses",
-            [witness_ids]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_witnesses", callback)
-        }
+    async get_witnesses(witness_ids) {
+        return await this.callWrapper("get_witnesses", [witness_ids])
     }
 
     /**
      * Get a witness id by user's account id
      * @param {string} account_id 
-     * @param {function} callback 
      */
-    get_witness_by_account(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_witness_by_account,
-            "get_witness_by_account",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_witness_by_account", callback)
-        }
+    async get_witness_by_account(account_id) {
+        return await this.callWrapper("get_witness_by_account", [account_id])
     }
 
     /**
      * Search for witnesses by account name
      * @param {string} name 
      * @param {integer} limit min 1, max 1000
-     * @param {function} callback 
      */
-    lookup_witness_accounts(name, limit, callback) {
+    async lookup_witness_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
         
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_witness_accounts,
-            "lookup_witness_accounts",
-            [
-                name,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_witness_accounts", callback)
-        }
+        return await this.callWrapper("lookup_witness_accounts", [
+            name,
+            limit
+        ])
     }
 
     /**
      * Get a total count of witnesses
-     * @param {function} callback 
      */
-    get_witness_count(callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_witness_count,
-            "get_witness_count",
-            []
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_witness_count", callback)
-        }
+    async get_witness_count() {
+        return await this.callWrapper("get_witness_count", [])
     }
 
     //
@@ -1123,78 +696,38 @@ get_collateral_bids(asset_id, limit, start, callback) {
     /**
      * Get committee members by their member ids
      * @param {array} member_ids committee member ids
-     * @param {function} callback 
      */
-    get_committee_members(member_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_committee_members,
-            "get_committee_members",
-            [member_ids]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_committee_members", callback)
-        }
+    async get_committee_members(member_ids) {
+        return await this.callWrapper("get_committee_members", [member_ids])
     }
 
     /**
      * Get committee member id by owner account id
      * @param {string} account_id 
-     * @param {function} callback 
      */
-    get_committee_member_by_account(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_committee_member_by_account,
-            "get_committee_member_by_account",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_committee_member_by_account", callback)
-        }
+    async get_committee_member_by_account(account_id) {
+        return await this.callWrapper("get_committee_member_by_account", [account_id])
     }
 
     /**
      * Search committee members by account name, returning committee member ids
      * @param {string} name 
      * @param {integer} limit min 1, max 1000
-     * @param {function} callback 
      */
-    lookup_committee_member_accounts(name, limit, callback) {
+    async lookup_committee_member_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
         
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_committee_member_accounts,
-            "lookup_committee_member_accounts",
-            [
-                name,
-                limit
-            ]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_committee_member_accounts", callback)
-        }
+        return await this.callWrapper("lookup_committee_member_accounts", [
+            name,
+            limit
+        ])
     }
     
     /**
      * Get a total count of committee members
-     * @param {function} callback 
      */
-    get_committee_count(callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_committee_count,
-            "get_committee_count",
-            []
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_committee_count", callback)
-        }
+    async get_committee_count() {
+        return await this.callWrapper("get_committee_count", [])
     }
 
     //
@@ -1203,54 +736,24 @@ get_collateral_bids(asset_id, limit, start, callback) {
 
     /**
      * Get a list of all workers
-     * @param {function} callback 
      */
-    get_all_workers(callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_all_workers,
-            "get_all_workers",
-            []
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_all_workers", callback)
-        }
+    async get_all_workers() {
+        return await this.callWrapper("get_all_workers", [])
     }
 
     /**
      * Get all workers associated with account_id
      * @param {string} account_id 
-     * @param {function} callback 
      */
-    get_workers_by_account(account_id, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_workers_by_account,
-            "get_workers_by_account",
-            [account_id]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_workers_by_account", callback)
-        }
+    async get_workers_by_account(account_id) {
+        return await this.callWrapper("get_workers_by_account", [account_id])
     }
 
     /**
      * Get a total count of workers
-     * @param {function} callback 
      */
-    get_worker_count(callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_worker_count,
-            "get_worker_count",
-            []
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_worker_count", callback)
-        }
+    async get_worker_count() {
+        return await this.callWrapper("get_worker_count", [])
     }
 
     //
@@ -1260,56 +763,37 @@ get_collateral_bids(asset_id, limit, start, callback) {
     /**
      * Find the objects the given vote_ids are for
      * @param {array} vote_ids 
-     * @param {function} callback 
      */
-    lookup_vote_ids(vote_ids, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.lookup_vote_ids,
-            "lookup_vote_ids",
-            [vote_ids]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.lookup_vote_ids", callback)
-        }
+    async lookup_vote_ids(vote_ids) {
+        return await this.callWrapper("lookup_vote_ids", [vote_ids])
     }
 
     //
     // Authority / Validation
     //
 
-    get_transaction_hex(transaction, callback) {
-        this.connection.request(
-            this.apiID,
-            this.event_ids.get_transaction_hex,
-            "get_transaction_hex",
-            [transaction]
-        )
-
-        if(typeof callback !== 'undefined') {
-            this.once("db.get_transaction_hex", callback)
-        }
+    async get_transaction_hex(transaction) {
+        return await this.callWrapper("get_transaction_hex", [transaction])
     }
-    get_required_signatures(transaction, available_keys, callback) {
+    async get_required_signatures(transaction, available_keys) {
 
     }
-    get_potential_signatures(transaction, callback) {
+    async get_potential_signatures(transaction) {
 
     }
-    get_potential_address_signatures(transaction, callback) {
+    async get_potential_address_signatures(transaction) {
 
     }
-    verify_authority(transaction, callback) {
+    async verify_authority(transaction) {
 
     }
-    verify_account_authority(name_or_id, signers, callback) {
+    async verify_account_authority(name_or_id, signers) {
 
     }
-    validate_transaction(transaction, callback) {
+    async validate_transaction(transaction) {
 
     }
-    get_required_fees(operations, asset_id, callback) {
+    async get_required_fees(operations, asset_id) {
 
     }
 
@@ -1336,6 +820,14 @@ get_collateral_bids(asset_id, limit, start, callback) {
      */
     get apiID() {
         return map.get(this).api_id
+    }
+
+    async callWrapper(method, params) {
+        // LATER: verify method in ids
+        return await new Promise(resolve => {
+            this.once("db." + method, resolve)
+            this.connection.request(this.apiID, this.event_ids[method], method, params)
+        })
     }
 
     /**

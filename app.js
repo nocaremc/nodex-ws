@@ -330,8 +330,7 @@ api.on("open", () => {
         //     process.env.DEX_USER_ID,
         //     margins => log.warn(margins)
         // )
-        let x = await api.database_api.get_margin_positions(process.env.DEX_USER_ID)
-        //console.log(x)
+        console.log(await api.database_api.get_margin_positions(process.env.DEX_USER_ID))
         //api.close()
     })
 })
