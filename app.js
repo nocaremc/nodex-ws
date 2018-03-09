@@ -22,307 +22,210 @@ api.on("open", () => {
         log.success("Database initialized")
         
         // Obtain user_id for a given username
-        // api.database_api.get_account_by_name(process.env.DEX_USER, result => {
-        //     log.warn(result)
-        // })
+        //log.warn(await api.database_api.get_account_by_name(process.env.DEX_USER))
         
         // Let's grab a list of assets we care about
-        // api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS, result => {
-        //     log.warn(result)
-        // })
+        //log.warn(await api.database_api.lookup_asset_symbols(process.env.ASSET_SYMBOLS))
 
         // Grab limit orders for bts:cny (unsure on base/quote)
-        // api.database_api.get_limit_orders('1.3.0', '1.3.113', 20, result => {
-        //     log.warn(result)
-        // })
+        //log.warn(await api.database_api.get_limit_orders('1.3.0', '1.3.113', 20))
 
         // Grab ticker price for bts:cny
-        // api.database_api.get_ticker('1.3.0', '1.3.113', false, (result) => {
-        //     log.warn(result)
-        // })
+        //log.warn(await api.database_api.get_ticker('1.3.0', '1.3.113', false))
 
-        //api.database_api.get_assets(['1.3.113', '1.3.0'], assets => {
-            //log.error(assets)
-        //})
+        //log.warn(await api.database_api.get_assets(['1.3.113', '1.3.0']))
         
         // Get some random objects
-        // api.database_api.get_objects(["2.4.21","2.4.83"], objects => {
-        //     log.warn(objects)
-        // })
+        //log.warn(await api.database_api.get_objects(["2.4.21","2.4.83"]))
         
         // Get block header
-        // api.database_api.get_block_header(24614236, block_header => {
-        //     log.warn(block_header)
-        // })
+        //log.warn(await api.database_api.get_block_header(24614236))
 
         // Get block's headers
-        // api.database_api.get_block_header_batch([24614236, 24614695], block_headers => {
-        //     log.warn(block_headers)
-        // })
+        //log.warn(await api.database_api.get_block_header_batch([24614236, 24614695]))
 
         // Get block
-        // api.database_api.get_block(24614236, block => {
-        //     log.warn(block)
-        // })
+        //log.warn(await api.database_api.get_block(24614236))
 
         // Get a transaction from a block
-        // api.database_api.get_transaction(24614807, 1, transaction => {
-        //     log.warn(transaction)
-        // })
+        //log.warn(await api.database_api.get_transaction(24614807, 1))
 
         // Get Chain Properties
-        // api.database_api.get_chain_properties(chain_properties => {
-        //     log.warn(chain_properties)
-        // })
+        //log.warn(await api.database_api.get_chain_properties())
 
         // Get current global properties
-        // api.database_api.get_global_properties(global_properties => {
-        //     log.warn(global_properties)
-        // })
+        //log.warn(await api.database_api.get_global_properties())
 
         // Get compiled constants
-        // api.database_api.get_config(config => {
-        //     log.warn(config)
-        // })
+        //log.warn(await api.database_api.get_config())
 
         // Get the chain id
-        // api.database_api.get_chain_id(id => {
-        //     log.warn(id)
-        // })
+        //log.warn(await api.database_api.get_chain_id())
 
         // get "dynamic global properties"
-        // api.database_api.get_dynamic_global_properties(properties => {
-        //     log.warn(properties)
-        // })
+        //log.warn(await api.database_api.get_dynamic_global_properties())
 
         // Get account ids associated with these public keys
-        // api.database_api.get_key_references(
-        //     [
-        //         '<public_key>',
-        //         '<public_key>'
-        //     ],
-        //     properties => {
-        //         log.warn(properties)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_key_references(
+        //         [
+        //             '<public_key>',
+        //             '<public_key>'
+        //         ]
+        //     )
         // )
 
         // Check if public key is registered (to an account?)
-        // api.database_api.is_public_key_registered(
-        //     '<public_key>',
-        //     properties => {
-        //         log.warn(properties)
-        //     }
-        // )
+        //log.warn(await api.database_api.is_public_key_registered('<public_key>'))
 
         // Get a list of accounts by ids
-        // api.database_api.get_accounts([process.env.DEX_USER_ID], accounts => {
-        //     log.warn(accounts)
-        // })
+        //log.warn(await api.database_api.get_accounts([process.env.DEX_USER_ID]))
 
         //Get "full accounts" with a list of ids or names
-        // api.database_api.get_full_accounts(
-        //     [
-        //         process.env.DEX_USER_ID,
-        //         process.env.DEX_USER
-        //     ],
-        //     false,
-        //     accounts => {
-        //         log.warn(accounts[0][1].balances)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_full_accounts(
+        //         [
+        //             process.env.DEX_USER_ID,
+        //             process.env.DEX_USER
+        //         ],
+        //         false
+        //     )
         // )
         
         // Get accounts that refer to this account in their permissions
-        // api.database_api.get_account_references(process.env.DEX_USER_ID, referances => {
-        //     log.warn(referances)
-        // })
+        //log.warn(await api.database_api.get_account_references(process.env.DEX_USER_ID))
 
         // Look up a list of accounts using account names
-        // api.database_api.lookup_account_names(
-        //     [
-        //         process.env.DEX_USER,
-        //         'bitshares'
-        //     ],
-        //     accounts => {
-        //         log.warn(accounts)
-        //     }
+        // log.warn(
+        //     await api.database_api.lookup_account_names(
+        //         [
+        //             process.env.DEX_USER,
+        //             'bitshares'
+        //         ],
+        //     )
         // )
 
         // Search for an account by name, list 10 results
-        // api.database_api.lookup_accounts(process.env.DEX_USER, 10, accounts => {
-        //     log.warn(accounts)
-        // })
+        //log.warn(await api.database_api.lookup_accounts(process.env.DEX_USER, 10))
 
         // Get a total count of accounts
-        // api.database_api.get_account_count(count => {
-        //     log.warn(count)
-        // })
+        //log.warn(await api.database_api.get_account_count())
         
         // Get account balance for cny and usd
-        // api.database_api.get_account_balances(
-        //     process.env.DEX_USER_ID,
-        //     ['1.3.0', '1.3.113'],
-        //     result => {
-        //         log.warn(result)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_account_balances(
+        //         process.env.DEX_USER_ID,
+        //         ['1.3.0', '1.3.113']
+        //     )
         // )
 
         // Get a specific account's balance for specified assets
-        // api.database_api.get_named_account_balances(
-        //     process.env.DEX_USER,
-        //     ['1.3.0'],
-        //     result => {
-        //         log.warn(result)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_named_account_balances(
+        //         process.env.DEX_USER,
+        //         ['1.3.0']
+        //     )
         // )
 
 // Unsure how to get this one going
-        // api.database_api.get_balance_objects(
-        //     ['base58somethingsomething'],
-        //     result => {
-        //         log.warn(result)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_balance_objects(['base58somethingsomething'])
         // )
 // Unsure how to get this one going
-        // api.database_api.get_vested_balances(
-        //     [process.env.DEX_USER_ID],
-        //     result => {
-        //         log.error(result)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_vested_balances([process.env.DEX_USER_ID])
         // )
         
-        // api.database_api.get_vesting_balances(
-        //     process.env.DEX_USER_ID,
-        //     results => {
-        //         log.error(result[0])
-        //     }
-        // )
+        //log.warn(await api.database_api.get_vesting_balances(process.env.DEX_USER_ID))
 
         // Search for an asset by symbol name
-        // api.database_api.list_assets('CNY', 1, results => {
-        //     log.warn(results)
-        // })
+        //log.warn(await api.database_api.list_assets('CNY', 1))
 
         // Get call orders for asset
-        // api.database_api.get_call_orders('1.3.113', 20, orders => {
-        //     log.warn(orders)
-        // })
+        //log.warn(await api.database_api.get_call_orders('1.3.113', 20))
 
         // get settle orders for asset
-        // api.database_api.get_settle_orders('1.3.113', 20, orders => {
-        //     log.warn(orders)
-        // })
+        //log.warn(await api.database_api.get_settle_orders('1.3.113', 20))
 
         // Get margins for an account
-        // api.database_api.get_margin_positions(process.env.DEX_USER_ID, margins => {
-        //     log.warn(margins)
-        // })
+        //log.warn(await api.database_api.get_margin_positions(process.env.DEX_USER_ID))
 
 // Unsure how to use this, or if even implemented
-        // api.database_api.get_collateral_bids('1.3.0', 1000, 0, bids => {
-        //     log.warn(bids)
-        // })
+        //log.warn(await api.database_api.get_collateral_bids('1.3.0', 1000, 0))
 
         // Subscribe to a bts:cny market
-        // api.database_api.subscribe_to_market(
-        //     '1.3.0', // bts
-        //     '1.3.113', // cny
-        //     market_event => {
-        //         log.warn(market_event)
-        //         // This will probably run a few times before unsub actually happens
-        //         // unsubscribe from bts:cny market
-        //         api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
-        //     }
-        // )
+        // let subscription_id = await api.database_api.subscribe_to_market('1.3.0', '1.3.113')
+        // api.on(subscription_id, data => {
+        //     log.warn(data);
+            
+        //     // Now unsubscribe from bts:cny market
+        //     api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
+        // })
 
         // Get 24 hour volume of an asset pair by symbol names
-        // api.database_api.get_24_volume('BTS', 'CNY', volume => {
-        //     log.warn(volume)
-        // })
+        //log.warn(await api.database_api.get_24_volume('BTS', 'CNY'))
 
         // Get current order book for pair
-        // api.database_api.get_order_book('CNY', 'BTS', 50, orders => {
-        //     log.warn(orders)
-        // })
+        //log.warn(await api.database_api.get_order_book('CNY', 'BTS', 50))
         
         // Get trade history for an asset pair
-        // api.database_api.get_trade_history(
-        //     'CNY',
-        //     'BTS',
-        //     '2018-03-02T07:57:52', // start
-        //     '2018-03-01T07:57:52', // stop
-        //     10, // limit
-        //     orders => {
-        //         log.warn(orders)
-        //     }
+        // When testing this, dates need to be within RPC_NODE's history (not too old)
+        // log.warn(
+        //     await api.database_api.get_trade_history(
+        //         'CNY',
+        //         'BTS',
+        //         '2018-03-09T07:57:52', // start
+        //         '2018-03-08T07:57:52', // stop
+        //         10
+        //     )
         // )
 
         // Get trade history, using a history sequence (from a history key) value
-        // api.database_api.get_trade_history_by_sequence(
-        //     'CNY',
-        //     'BTS',
-        //     10, // start
-        //     '2018-03-01T07:57:52', // stop
-        //     10, // limit
-        //     orders => {
-        //         log.warn(orders)
-        //     }
+        // log.warn(
+        //     await api.database_api.get_trade_history_by_sequence(
+        //         'CNY',
+        //         'BTS',
+        //         10, // start
+        //         '2018-03-09T07:57:52', // stop
+        //         10, // limit
+        //     )
         // )
 
         // Get a witness id by their account_id (in.abit)
-        // api.database_api.get_witness_by_account('1.2.35248', result => {
-        //     log.warn(result)
-        // })
+        //log.warn(await api.database_api.get_witness_by_account('1.2.35248'))
+        
         // Get a witness object by its witness id (in.abit)
-        // api.database_api.get_witnesses(['1.6.35'], witnesses => {
-        //     log.error(witnesses)
-        // })
+        //log.warn(await api.database_api.get_witnesses(['1.6.35']))
 
         // Search for a witness id by their witness account name
-        // api.database_api.lookup_witness_accounts('in.abit', 5, accounts => {
-        //     log.error(accounts)
-        // })
+        //log.warn(await api.database_api.lookup_witness_accounts('in.abit', 5))
 
         // Get a count of witnesses
-        // api.database_api.get_witness_count(count => {
-        //     log.info(count)
-        // })
+        //log.warn(await api.database_api.get_witness_count())
 
         // Get committee member objects by ids
-        // api.database_api.get_committee_members(['1.5.13'], members => {
-        //     log.warn(members)
-        // })
+        //log.warn(await api.database_api.get_committee_members(['1.5.13']))
 
         // Get committee member by committee member account id
-        // api.database_api.get_committee_member_by_account('1.2.21106', member => {
-        //     log.error(member)
-        // })
+        //log.warn(await api.database_api.get_committee_member_by_account('1.2.21106'))
 
         // Search committee members by account name
-        // api.database_api.lookup_committee_member_accounts('fav', 50, count => {
-        //     log.info(count)
-        // })
+        //log.warn(await api.database_api.lookup_committee_member_accounts('fav', 50))
 
         // Get a total count of committee memebers
-        // api.database_api.get_committee_count(count => {
-        //     log.info(count)
-        // })
+        //log.warn(await api.database_api.get_committee_count())
 
         // Get list of all workers
-        // api.database_api.get_all_workers(workers => {
-        //     log.warn(workers)
-        // })
+        //log.warn(await api.database_api.get_all_workers())
 
         // Get all workers associated with account_id
-        // api.database_api.get_workers_by_account(
-        //     '1.2.364315',
-        //     workers => log.warn(workers)
-        // )
+        //log.warn(await api.database_api.get_workers_by_account('1.2.364315'))
 
         // Get count of workers
-        //api.database_api.get_worker_count(count => log.warn(count))
+        //log.warn(await api.database_api.get_worker_count())
 
         // lookup objects these votes are for
-        //api.database_api.lookup_vote_ids([], result => log.warn(result))
+        log.warn(await api.database_api.lookup_vote_ids([]))
         
         //api.database_api.get_transaction_hex(1, hex => log.warn(hex))
         
@@ -330,7 +233,7 @@ api.on("open", () => {
         //     process.env.DEX_USER_ID,
         //     margins => log.warn(margins)
         // )
-        console.log(await api.database_api.get_margin_positions(process.env.DEX_USER_ID))
+        //console.log(await api.database_api.get_margin_positions(process.env.DEX_USER_ID))
         //api.close()
     })
 })

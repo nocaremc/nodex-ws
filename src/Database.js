@@ -158,7 +158,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} ids array of object ids
      */
     async get_objects(ids) {
-        return await this.callWrapper("get_objects", [ids])
+        return this.callWrapper("get_objects", [ids])
     }
 
     //
@@ -170,7 +170,7 @@ if(typeof callback !== 'undefined') {
      * @param {integer} block_num block id
      */
     async get_block_header(block_num) {
-        return await this.callWrapper("get_block_header", [block_num])
+        return this.callWrapper("get_block_header", [block_num])
     }
 
     /**
@@ -178,7 +178,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} block_nums array of block ids
      */
     async get_block_header_batch(block_nums) {
-        return await this.callWrapper("get_block_header_batch", [block_nums])
+        return this.callWrapper("get_block_header_batch", [block_nums])
     }
 
     /**
@@ -186,7 +186,7 @@ if(typeof callback !== 'undefined') {
      * @param {integer} block_num block id
      */
     async get_block(block_num) {
-        return await this.callWrapper("get_block", [block_num])
+        return this.callWrapper("get_block", [block_num])
     }
 
     /**
@@ -195,7 +195,7 @@ if(typeof callback !== 'undefined') {
      * @param {integer} transaction_id signed transaction id in given block id
      */
     async get_transaction(block_num, transaction_id) {
-        return await this.callWrapper("get_transaction", [
+        return this.callWrapper("get_transaction", [
             block_num,
             transaction_id
         ])
@@ -209,28 +209,28 @@ if(typeof callback !== 'undefined') {
      * Get chain properties object
      */
     async get_chain_properties() {
-        return await this.callWrapper("get_chain_properties", [])
+        return this.callWrapper("get_chain_properties", [])
     }
 
     /**
      * Get `current` global properties object
      */
     async get_global_properties() {
-        return await this.callWrapper("get_global_properties", [])
+        return this.callWrapper("get_global_properties", [])
     }
 
     /**
      * Get compiled constants
      */
     async get_config() {
-        return await this.callWrapper("get_config", [])
+        return this.callWrapper("get_config", [])
     }
 
     /**
      * Get the chain ID
      */
     async get_chain_id() {
-        return await this.callWrapper("get_chain_id", [])
+        return this.callWrapper("get_chain_id", [])
     }
 
     /**
@@ -238,7 +238,7 @@ if(typeof callback !== 'undefined') {
      * What exactly is this?
      */
     async get_dynamic_global_properties() {
-        return await this.callWrapper("get_dynamic_global_properties", [])
+        return this.callWrapper("get_dynamic_global_properties", [])
     }
 
     //
@@ -250,7 +250,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} keys public keys as strings
      */
     async get_key_references(keys) {
-        return await this.callWrapper("get_key_references", [keys])
+        return this.callWrapper("get_key_references", [keys])
     }
 
     /**
@@ -258,7 +258,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} key public key
      */
     async is_public_key_registered(key) {
-        return await this.callWrapper("is_public_key_registered", [key])
+        return this.callWrapper("is_public_key_registered", [key])
     }
 
     //
@@ -270,7 +270,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} account_ids 
      */
     async get_accounts(account_ids) {
-        return await this.callWrapper("get_accounts", [account_ids])
+        return this.callWrapper("get_accounts", [account_ids])
     }
 
     /**
@@ -279,7 +279,7 @@ if(typeof callback !== 'undefined') {
      * @param {boolean} subscribe 
      */
     async get_full_accounts(name_or_ids, subscribe) {
-        return await this.callWrapper("get_full_accounts", [
+        return this.callWrapper("get_full_accounts", [
             name_or_ids,
             subscribe
         ])
@@ -290,7 +290,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} name account name
      */
     async get_account_by_name(name) {
-        return await this.callWrapper("get_account_by_name", [name])
+        return this.callWrapper("get_account_by_name", [name])
     }
 
     /**
@@ -298,7 +298,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} account_id 
      */
     async get_account_references(account_id) {
-        return await this.callWrapper("get_account_references", [account_id])
+        return this.callWrapper("get_account_references", [account_id])
     }
 
     /**
@@ -306,7 +306,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} names account names
      */
     async lookup_account_names(names) {
-        return await this.callWrapper("lookup_account_names", [names])
+        return this.callWrapper("lookup_account_names", [names])
     }
 
     /**
@@ -317,14 +317,14 @@ if(typeof callback !== 'undefined') {
     async lookup_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
 
-        return await this.callWrapper("lookup_accounts", [name, limit])
+        return this.callWrapper("lookup_accounts", [name, limit])
     }
 
     /**
      * Get a total count of accounts
      */
     async get_account_count() {
-        return await this.callWrapper("get_account_count", [])
+        return this.callWrapper("get_account_count", [])
     }
 
     //
@@ -338,7 +338,7 @@ if(typeof callback !== 'undefined') {
      */
     async get_account_balances(account_id, assets) {
         // LATER: error check asset ids... as a start
-        return await this.callWrapper("get_account_balances", [account_id, assets])
+        return this.callWrapper("get_account_balances", [account_id, assets])
     }
     
     /**
@@ -347,36 +347,36 @@ if(typeof callback !== 'undefined') {
      * @param {array} asset_ids 
      */
     async get_named_account_balances(name, asset_ids) {
-        return await this.callWrapper("get_named_account_balances", [
+        return this.callWrapper("get_named_account_balances", [
             name,
             asset_ids
         ])
     }
 
-    /**
-     * Get unclaimed balance objects for base58 addresses (legacy?)
-     * @param {array} addrs array of base58 addresses?
-     */
-    async get_balance_objects(addrs) {
-        log.error("DB.get_balance_objects is not tested")
-        return await this.callWrapper("get_balance_objects", [addrs])
-    }
+/**
+ * Get unclaimed balance objects for base58 addresses (legacy?)
+ * @param {array} addrs array of base58 addresses?
+ */
+async get_balance_objects(addrs) {
+    log.error("DB.get_balance_objects is not tested")
+    return false //this.callWrapper("get_balance_objects", [addrs])
+}
 
-    /**
-     * Get vested balances for balance objects?
-     * @param {array} objs 
-     */
-    async get_vested_balances(objs) {
-        log.error("DB.get_vested_balances is not tested")
-        return await this.callWrapper("get_vested_balances", [objs])
-    }
+/**
+ * Get vested balances for balance objects?
+ * @param {array} objs 
+ */
+async get_vested_balances(objs) {
+    log.error("DB.get_vested_balances is not tested")
+    return false //this.callWrapper("get_vested_balances", [objs])
+}
 
     /**
      * Get the vesting balances for an account
      * @param {string} account_id 
      */
     async get_vesting_balances(account_id) {
-        return await this.callWrapper("get_vesting_balances", [account_id])
+        return this.callWrapper("get_vesting_balances", [account_id])
     }
 
     //
@@ -388,7 +388,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} asset_ids 
      */
     async get_assets(asset_ids) {
-        return await this.callWrapper("get_assets", [asset_ids])
+        return this.callWrapper("get_assets", [asset_ids])
     }
 
     /**
@@ -399,7 +399,7 @@ if(typeof callback !== 'undefined') {
     async list_assets(symbol, limit) {
         limit = clamp(limit, 1, 100)
 
-        return await this.callWrapper("list_assets", [symbol, limit])
+        return this.callWrapper("list_assets", [symbol, limit])
     }
     
     /**
@@ -409,7 +409,7 @@ if(typeof callback !== 'undefined') {
     async lookup_asset_symbols(symbols) {
         // We could/should check local asset collection first.
         // Then we could build and emit a replica locally
-        return await this.callWrapper("lookup_asset_symbols", [JSON.parse(symbols)])
+        return this.callWrapper("lookup_asset_symbols", [JSON.parse(symbols)])
     }
 
     //
@@ -425,7 +425,7 @@ if(typeof callback !== 'undefined') {
     async get_limit_orders(asset_id_a, asset_id_b, limit) {
         limit = clamp(limit, 1, 100)
         
-        return await this.callWrapper("get_limit_orders", [
+        return this.callWrapper("get_limit_orders", [
             asset_id_a,
             asset_id_b,
             limit
@@ -440,7 +440,7 @@ if(typeof callback !== 'undefined') {
     async get_call_orders(asset_id, limit) {
         limit = clamp(limit, 1, 100)
 
-        return await this.callWrapper("get_call_orders", [asset_id, limit])
+        return this.callWrapper("get_call_orders", [asset_id, limit])
     }
 
     /**
@@ -451,7 +451,7 @@ if(typeof callback !== 'undefined') {
     async get_settle_orders(asset_id, limit) {
         limit = clamp(limit, 1, 100)
 
-        return await this.callWrapper("get_settle_orders", [asset_id, limit])
+        return this.callWrapper("get_settle_orders", [asset_id, limit])
     }
 
     /**
@@ -459,23 +459,23 @@ if(typeof callback !== 'undefined') {
      * @param {string} account_id 
      */
     async get_margin_positions(account_id) {
-        return await this.callWrapper("get_margin_positions", [account_id])
+        return this.callWrapper("get_margin_positions", [account_id])
     }
 
-    async get_collateral_bids(asset_id, limit, start) {
-        log.error("db.get_collateral_bids is not tested")
+async get_collateral_bids(asset_id, limit, start) {
+    log.error("db.get_collateral_bids is not tested")
 
-        limit = clamp(limit, 1, 100)
+    limit = clamp(limit, 1, 100)
 
-        if(!start) {
-            start = 0
-        }
-        return await this.callWrapper("get_margin_positions", [
-            asset_id,
-            limit,
-            start
-        ])
+    if(!start) {
+        start = 0
     }
+    return false /*this.callWrapper("get_margin_positions", [
+        asset_id,
+        limit,
+        start
+    ])*/
+}
 
     /**
      * Initiate a subscription to the market for an asset pair
@@ -491,24 +491,15 @@ if(typeof callback !== 'undefined') {
 
         // Check if a subscription for this market exists
         // .... this doesn't stop the key from repeating
-        const hasKey = await this.subscription_ids.has(key)
+        let hasKey = await this.subscription_ids.has(key)
         if(!hasKey) {
             await this.subscription_ids.set(key, value)
 
-            this.connection.request(
-                this.apiID,
-                this.event_ids.subscribe_to_market,
-                "subscribe_to_market",
-                [
-                    key,
-                    asset_id_a,
-                    asset_id_b
-                ]
-            )
-    
-            if(typeof callback !== 'undefined') {
-                this.on("db.subscribe_to_market." + value, callback)
-            }
+            return this.subscribeWrapper("subscribe_to_market", [
+                key,
+                asset_id_a,
+                asset_id_b
+            ], value)
         } else {
             log.error("A subscription for: \"" + value + "\" already exists!")
         }
@@ -519,7 +510,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} asset_id_a 
      * @param {string} asset_id_b 
      */
-    async unsubscribe_from_market(asset_id_a, asset_id_b) {
+    unsubscribe_from_market(asset_id_a, asset_id_b) {
         // Determine if this asset pair is subscribed to
         let pair = this.subscription_ids.filter(item => {
             return item === asset_id_a + ":" + asset_id_b
@@ -528,21 +519,15 @@ if(typeof callback !== 'undefined') {
         if(pair.length > 0) {
             if(pair.length > 1) {
                 log.error('This is too long..')
-                return
+                return false
             }
-
-            this.connection.request(
-                this.apiID,
-                this.event_ids.unsubscribe_from_market,
-                "unsubscribe_from_market",
-                [
-                    asset_id_a,
-                    asset_id_b
-                ]
-            )
-
+            
             this.subscription_ids.delete(pair.get(0))
+            this.callWrapper("unsubscribe_from_market", [asset_id_a, asset_id_b])
+
+            
             log.info("Removed market subscription: " + asset_id_a + ":" + asset_id_b)
+            return true
         }
     }
     
@@ -553,7 +538,7 @@ if(typeof callback !== 'undefined') {
      * @param {boolean} skip skip order book? default false
      */
     async get_ticker(asset_id_base, asset_id_quote, skip) {
-        return await this.callWrapper("get_ticker", [
+        return this.callWrapper("get_ticker", [
             asset_id_base,
             asset_id_quote,
             skip
@@ -571,7 +556,7 @@ if(typeof callback !== 'undefined') {
             return false
         }
 
-        return await this.callWrapper("get_24_volume", [
+        return this.callWrapper("get_24_volume", [
             base.toUpperCase(),
             quote.toUpperCase()
         ])
@@ -591,7 +576,7 @@ if(typeof callback !== 'undefined') {
         
         limit = clamp(limit, 1, 50)
 
-        return await this.callWrapper("get_order_book", [
+        return this.callWrapper("get_order_book", [
             base.toUpperCase(),
             quote.toUpperCase(),
             limit
@@ -614,7 +599,7 @@ if(typeof callback !== 'undefined') {
 
         limit = clamp(limit, 1, 100)
 
-        return await this.callWrapper("get_trade_history", [
+        return this.callWrapper("get_trade_history", [
             base.toUpperCase(),
             quote.toUpperCase(),
             start,
@@ -639,7 +624,7 @@ if(typeof callback !== 'undefined') {
 
         limit = clamp(limit, 1, 100)
 
-        return await this.callWrapper("get_trade_history_by_sequence", [
+        return this.callWrapper("get_trade_history_by_sequence", [
             base.toUpperCase(),
             quote.toUpperCase(),
             start,
@@ -657,7 +642,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} witness_ids 
      */
     async get_witnesses(witness_ids) {
-        return await this.callWrapper("get_witnesses", [witness_ids])
+        return this.callWrapper("get_witnesses", [witness_ids])
     }
 
     /**
@@ -665,7 +650,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} account_id 
      */
     async get_witness_by_account(account_id) {
-        return await this.callWrapper("get_witness_by_account", [account_id])
+        return this.callWrapper("get_witness_by_account", [account_id])
     }
 
     /**
@@ -676,7 +661,7 @@ if(typeof callback !== 'undefined') {
     async lookup_witness_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
         
-        return await this.callWrapper("lookup_witness_accounts", [
+        return this.callWrapper("lookup_witness_accounts", [
             name,
             limit
         ])
@@ -686,7 +671,7 @@ if(typeof callback !== 'undefined') {
      * Get a total count of witnesses
      */
     async get_witness_count() {
-        return await this.callWrapper("get_witness_count", [])
+        return this.callWrapper("get_witness_count", [])
     }
 
     //
@@ -698,7 +683,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} member_ids committee member ids
      */
     async get_committee_members(member_ids) {
-        return await this.callWrapper("get_committee_members", [member_ids])
+        return this.callWrapper("get_committee_members", [member_ids])
     }
 
     /**
@@ -706,7 +691,7 @@ if(typeof callback !== 'undefined') {
      * @param {string} account_id 
      */
     async get_committee_member_by_account(account_id) {
-        return await this.callWrapper("get_committee_member_by_account", [account_id])
+        return this.callWrapper("get_committee_member_by_account", [account_id])
     }
 
     /**
@@ -717,7 +702,7 @@ if(typeof callback !== 'undefined') {
     async lookup_committee_member_accounts(name, limit) {
         limit = clamp(limit, 1, 1000)
         
-        return await this.callWrapper("lookup_committee_member_accounts", [
+        return this.callWrapper("lookup_committee_member_accounts", [
             name,
             limit
         ])
@@ -727,7 +712,7 @@ if(typeof callback !== 'undefined') {
      * Get a total count of committee members
      */
     async get_committee_count() {
-        return await this.callWrapper("get_committee_count", [])
+        return this.callWrapper("get_committee_count", [])
     }
 
     //
@@ -738,7 +723,7 @@ if(typeof callback !== 'undefined') {
      * Get a list of all workers
      */
     async get_all_workers() {
-        return await this.callWrapper("get_all_workers", [])
+        return this.callWrapper("get_all_workers", [])
     }
 
     /**
@@ -746,14 +731,14 @@ if(typeof callback !== 'undefined') {
      * @param {string} account_id 
      */
     async get_workers_by_account(account_id) {
-        return await this.callWrapper("get_workers_by_account", [account_id])
+        return this.callWrapper("get_workers_by_account", [account_id])
     }
 
     /**
      * Get a total count of workers
      */
     async get_worker_count() {
-        return await this.callWrapper("get_worker_count", [])
+        return this.callWrapper("get_worker_count", [])
     }
 
     //
@@ -765,7 +750,7 @@ if(typeof callback !== 'undefined') {
      * @param {array} vote_ids 
      */
     async lookup_vote_ids(vote_ids) {
-        return await this.callWrapper("lookup_vote_ids", [vote_ids])
+        return this.callWrapper("lookup_vote_ids", [vote_ids])
     }
 
     //
@@ -773,7 +758,7 @@ if(typeof callback !== 'undefined') {
     //
 
     async get_transaction_hex(transaction) {
-        return await this.callWrapper("get_transaction_hex", [transaction])
+        return this.callWrapper("get_transaction_hex", [transaction])
     }
     async get_required_signatures(transaction, available_keys) {
 
@@ -824,12 +809,18 @@ if(typeof callback !== 'undefined') {
 
     async callWrapper(method, params) {
         // LATER: verify method in ids
-        return await new Promise(resolve => {
+        return new Promise(resolve => {
             this.once("db." + method, resolve)
             this.connection.request(this.apiID, this.event_ids[method], method, params)
         })
     }
 
+    subscribeWrapper(method, params, key) {
+        // LATER: verify method in ids
+        this.connection.request(this.apiID, this.event_ids[method], method, params)
+        return "db." + method + "." + key
+    }
+    
     /**
      * Attach an event to EventEmitter 
      * @param {string} event event name
