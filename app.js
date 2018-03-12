@@ -48,8 +48,8 @@ api.on("open", () => {
         //log.warn(await api.database_api.get_block(24614236))
 
         // Get a transaction from a block
-        //log.warn(await api.database_api.get_transaction(24614807, 1))
-
+        //log.warn(await database.get_transaction(24614807, 1))
+        
         // Get Chain Properties
         //log.warn(await api.database_api.get_chain_properties())
 
@@ -225,7 +225,7 @@ api.on("open", () => {
         //log.warn(await api.database_api.get_worker_count())
 
         // lookup objects these votes are for
-        log.warn(await api.database_api.lookup_vote_ids([]))
+        //log.warn(await api.database_api.lookup_vote_ids([]))
         
         //api.database_api.get_transaction_hex(1, hex => log.warn(hex))
         
@@ -235,6 +235,28 @@ api.on("open", () => {
         // )
         //console.log(await api.database_api.get_margin_positions(process.env.DEX_USER_ID))
         //api.close()
+
+
+        let trx = await database.get_transaction(24614807, 1)
+        
+        // Get a hexdump for transaction
+        //log.warn(await database.get_transaction_hex(trx))
+
+        // Get potential public keys for transaction
+        let signatures = await database.get_potential_signatures(trx)
+    // Wut this do?
+    //log.warn(await database.get_required_signatures(trx, signatures))
+        
+        // Get public keys that could sign this transaction
+        //log.warn(await database.get_potential_address_signatures(trx))
+
+        // Does this transaction have the required signatures?
+        //log.warn(await database.verify_authority(trx))
+
+    // Validate transaction
+    //log.warn(await database.validate_transaction(trx))
+        
+        //log.warn(await database.verify_account_authority(process.env.DEX_USER_ID, signatures))
     })
 })
 let x = false

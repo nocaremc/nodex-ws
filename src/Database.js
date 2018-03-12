@@ -757,30 +757,76 @@ async get_collateral_bids(asset_id, limit, start) {
     // Authority / Validation
     //
 
+    /**
+     * Get a hexdump for transaction
+     * @param {object} transaction transaction object
+     */
     async get_transaction_hex(transaction) {
         return this.callWrapper("get_transaction_hex", [transaction])
     }
-    async get_required_signatures(transaction, available_keys) {
 
-    }
+/**
+ * LATER: This does a thing
+ * @param {object} transaction "partially signed" transaction
+ * @param {array} available_keys public keys
+ */
+async get_required_signatures(transaction, available_keys) {
+    return this.callWrapper("get_required_signatures", [transaction, available_keys])
+}
+
+    /**
+     * Get potential public keys for transaction
+     * @param {object} transaction transaction object
+     */
     async get_potential_signatures(transaction) {
-
+        return this.callWrapper("get_potential_signatures", [transaction])
     }
-    async get_potential_address_signatures(transaction) {
 
-    }
+/**
+ * LATER: This does a thing
+ * @param {object} transaction transaction object
+ */
+async get_potential_address_signatures(transaction) {
+    return this.callWrapper("get_potential_address_signatures", [transaction])
+}
+
+    /**
+     * Does this transaction have the required signatures?
+     * @param {object} transaction transaction object
+     */
     async verify_authority(transaction) {
-
+        return this.callWrapper("verify_authority", [transaction])
     }
-    async verify_account_authority(name_or_id, signers) {
 
-    }
-    async validate_transaction(transaction) {
+/**
+ * Verify public keys have authority to authorize account
+ * @param {string} account_name_or_id 
+ * @param {array} keys public keys
+ */
+async verify_account_authority(account_name_or_id, keys) {
+    log.error('db.verifiy_account_authority "true" state is not tested')
+    return this.callWrapper("verify_account_authority", [account_name_or_id , keys])
+}
 
-    }
-    async get_required_fees(operations, asset_id) {
+/**
+ * Validates a transaction (against "current state") without broacasting it
+ * @param {object} transaction 
+ */
+async validate_transaction(transaction) {
+    log.error('db.validate_transaction is untested')
+    return this.callWrapper("validate_transaction", [transaction])
+}
 
-    }
+/**
+ * Get fees for each operate on asset.
+ * LATER: What is an operation?
+ * @param {array} operations 
+ * @param {string} asset_id 
+ */
+async get_required_fees(operations, asset_id) {
+    log.error('db.get_required_fees is not tested')
+    return this.callWrapper("get_required_fees", [operations, asset_id])
+}
 
     /**
      * @return {Connection} Connection instance
