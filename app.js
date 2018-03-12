@@ -270,6 +270,22 @@ api.on("open", () => {
         //     // Unsubscribe
         //     await database.cancel_all_subscriptions()
         // })
+
+        // Subscribe to pending transactions ?
+        // let pending_id = await database.set_pending_transaction_callback(1447)
+        // database.on(pending_id, async variant => {
+        //     log.warn(variant)
+        //     // Unsubscribe... does not work for this
+        //     //await database.cancel_all_subscriptions()
+        // })
+        
+        let block_sub_id = await database.set_block_applied_callback(1234)
+        database.on(block_sub_id, async block_id => {
+            log.error(block_id)
+            
+            // Unsubscribe: again does not work here
+            //await database.cancel_all_subscriptions()
+        })
     })
 })
 let x = false

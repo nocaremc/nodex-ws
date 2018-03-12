@@ -178,29 +178,65 @@ class Database {
         }
     }
 
+    /**
+     * Subscribe to pending transactions stream
+     * @param {string} unique_id 
+     */
+    async set_pending_transaction_callback(unique_id) {
+        let key = this.event_ids.set_subscribe_callback + this.subscription_ids.length + 600
+        let value = 'db.set_pending_transaction_callback.' + unique_id
 
-    /*set_pending_transaction_callback(callback(variant)) {
+        // Check if a subscription for this market exists
+        // .... this doesn't stop the key from repeating
+        let hasKey = await this.subscription_ids.has(key)
+        if(!hasKey) {
+            await this.subscription_ids.set(key, value)
 
-    }
-    set_block_applied_callback(callback(block_id)) {
-
-    }*/
-    async cancel_all_subscriptions() {
-        let pair = this.subscription_ids.filter(item => {
-            return item === 'db.set_subscribe_callback.general'
-        })
-        
-        if(pair.length > 0) {
-            if(pair.length > 1) {
-                log.error('This is too long..')
-                return false
-            }
-            
-            this.subscription_ids.delete(pair.get(0))
-            log.info("Removed general subscriptions")
-            return await this.callWrapper("cancel_all_subscriptions", [])
+            return this.subscribeWrapper(
+                "set_pending_transaction_callback", 
+                [
+                    key
+                ],
+                value
+            )
         }
-        return false
+    }
+
+    /**
+     * Subscribe to stream of newly signed/minted/forged/applied blocks
+     * @param {string} unique_id 
+     */
+    async set_block_applied_callback(unique_id) {
+        let key = this.event_ids.set_block_applied_callback + this.subscription_ids.length + 700
+        let value = 'db.set_block_applied_callback.' + unique_id
+
+        // Check if a subscription for this market exists
+        // .... this doesn't stop the key from repeating
+        let hasKey = await this.subscription_ids.has(key)
+        if(!hasKey) {
+            await this.subscription_ids.set(key, value)
+
+            return this.subscribeWrapper(
+                "set_block_applied_callback", 
+                [
+                    key
+                ],
+                value
+            )
+        }
+    }
+
+    /**
+     * Cancel all subscriptions to ???
+     * BUG: Only appears to affect db.set_subscribe_callback (RPC side)
+     */
+    async cancel_all_subscriptions() {
+        this.subscription_ids.forEach((item, key) => {
+            this.subscription_ids.delete(key)
+            log.info("Removed subscription: " + item)
+        })
+
+        return await this.callWrapper("cancel_all_subscriptions", [])
     }
 
     //
@@ -988,11 +1024,16 @@ async get_required_fees(operations, asset_id) {
             // Subscriptions
             //
             case events.set_subscribe_callback:
-                
                 this.emit('db.set_subscribe_callback', data.result)
             break;
-            //set_pending_transaction_callback
-            //set_block_applied_callback
+            
+            case events.set_pending_transaction_callback:
+                this.emit('db.set_pending_transaction_callback', data.result)
+            break;
+            
+            case events.set_block_applied_callback:
+                this.emit('db.set_block_applied_callback', data.result)
+            break;
             
             case events.cancel_all_subscriptions:
                 this.emit('db.cancel_all_subscriptions', data.result)
