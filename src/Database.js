@@ -42,6 +42,11 @@ class Database {
                 [
                     // Objects
                     'get_objects',
+                    // Subscriptions
+                    'set_subscribe_callback',
+                    'set_pending_transaction_callback',
+                    'set_block_applied_callback',
+                    'cancel_all_subscriptions',
                     // Blocks and transactions
                     'get_block_header',
                     'get_block_header_batch',
@@ -112,6 +117,10 @@ class Database {
                     'verify_account_authority',
                     'validate_transaction',
                     'get_required_fees',
+                    // Proposed Transactions
+                    'get_proposed_transactions',
+                    // Blinded Balances
+                    'get_blinded_balances',
                 ]
             ),
             subscription_ids: new Map()
@@ -123,32 +132,6 @@ class Database {
         map.get(this).connection.on("message", data => this.message(data))
     }
 
-    
-
-    /*
-    - Subscriptions
-    set_subscribe_callback(callback(variant), notify_remove_create)
-    set_pending_transaction_callback(callback(variant))
-    set_block_applied_callback(callback(block_id))
-    cancel_all_subscriptions()
-
-    - Proposed transactions
-    get_proposed_transactions(account_id)
-
-    - Blinded balances
-    get_blinded_balances(commitments) ???
-
-this.connection.request(
-    this.apiD,
-    this.event_ids.,
-    "",
-    []
-)
-if(typeof callback !== 'undefined') {
-    this.once("db.", callback)
-}
-    */
-
     //
     // Objects
     //
@@ -159,6 +142,65 @@ if(typeof callback !== 'undefined') {
      */
     async get_objects(ids) {
         return this.callWrapper("get_objects", [ids])
+    }
+
+    //
+    // Subscriptions
+    //
+    // LATER: What does this set of functions even do?
+
+    /**
+     * Subscribe to ???
+     * @param {function} callback (unused as unsure of purpose)
+     * @param {boolean} notify_remove_create 
+     */
+    async set_subscribe_callback(notify_remove_create) {
+        let key = this.event_ids.set_subscribe_callback + this.subscription_ids.length + 400
+        let value = 'db.set_subscribe_callback.general'
+
+        // Check if a subscription for this market exists
+        // .... this doesn't stop the key from repeating
+        let hasKey = await this.subscription_ids.has(key)
+        if(!hasKey) {
+            await this.subscription_ids.set(key, value)
+
+            return this.subscribeWrapper(
+                "set_subscribe_callback", 
+                [
+                    key, // Callback goes here, but seems to prefer integers.
+                    notify_remove_create
+                ],
+                value
+            )
+
+        } else {
+            log.error("A subscription for: \"" + value + "\" already exists!")
+        }
+    }
+
+
+    /*set_pending_transaction_callback(callback(variant)) {
+
+    }
+    set_block_applied_callback(callback(block_id)) {
+
+    }*/
+    async cancel_all_subscriptions() {
+        let pair = this.subscription_ids.filter(item => {
+            return item === 'db.set_subscribe_callback.general'
+        })
+        
+        if(pair.length > 0) {
+            if(pair.length > 1) {
+                log.error('This is too long..')
+                return false
+            }
+            
+            this.subscription_ids.delete(pair.get(0))
+            log.info("Removed general subscriptions")
+            return await this.callWrapper("cancel_all_subscriptions", [])
+        }
+        return false
     }
 
     //
@@ -487,7 +529,7 @@ async get_collateral_bids(asset_id, limit, start) {
     async subscribe_to_market(asset_id_a, asset_id_b) {
         let key = this.event_ids.subscribe_to_market + this.subscription_ids.length + 500
         
-        let value = asset_id_a + ":" + asset_id_b
+        let value = "db.subscribe_to_market." + asset_id_a + ":" + asset_id_b
 
         // Check if a subscription for this market exists
         // .... this doesn't stop the key from repeating
@@ -513,7 +555,7 @@ async get_collateral_bids(asset_id, limit, start) {
     unsubscribe_from_market(asset_id_a, asset_id_b) {
         // Determine if this asset pair is subscribed to
         let pair = this.subscription_ids.filter(item => {
-            return item === asset_id_a + ":" + asset_id_b
+            return item === "db.subscribe_to_market." + asset_id_a + ":" + asset_id_b
         })
         
         if(pair.length > 0) {
@@ -828,6 +870,31 @@ async get_required_fees(operations, asset_id) {
     return this.callWrapper("get_required_fees", [operations, asset_id])
 }
 
+    //
+    // Proposed Transactions
+    //
+
+    /**
+     * Get proposed transactions for an account
+     * @param {string} account_id 
+     */
+    get_proposed_transactions(account_id) {
+        return this.callWrapper("get_proposed_transactions", [account_id])
+    }
+
+    //
+    // Blinded Balances
+    //
+
+    /**
+     * Return blinded balance objects by commitment id
+     * @param {array} commitments commitment ids
+     */
+    get_blinded_balances(commitments) {
+        log.error('db.get_blinded_balances is not tested')
+        return this.callWrapper("get_blinded_balances", [commitments])
+    }
+
     /**
      * @return {Connection} Connection instance
      */
@@ -864,7 +931,7 @@ async get_required_fees(operations, asset_id) {
     subscribeWrapper(method, params, key) {
         // LATER: verify method in ids
         this.connection.request(this.apiID, this.event_ids[method], method, params)
-        return "db." + method + "." + key
+        return key
     }
     
     /**
@@ -915,6 +982,20 @@ async get_required_fees(operations, asset_id) {
             //
             case events.get_objects:
                 this.emit("db.get_objects", data.result)
+            break;
+
+            //
+            // Subscriptions
+            //
+            case events.set_subscribe_callback:
+                
+                this.emit('db.set_subscribe_callback', data.result)
+            break;
+            //set_pending_transaction_callback
+            //set_block_applied_callback
+            
+            case events.cancel_all_subscriptions:
+                this.emit('db.cancel_all_subscriptions', data.result)
             break;
 
             //
@@ -1214,20 +1295,32 @@ async get_required_fees(operations, asset_id) {
             case events.get_required_fees:
                 this.emit('db.get_required_fees', data.result)
             break;
+            
+            //
+            // Proposed Transactions
+            //
+            case events.get_proposed_transactions:
+                this.emit('db.get_proposed_transactions', data.result)
+            break;
 
+            //
+            // Blinded Balances
+            //
+            case events.get_blinded_balances:
+                this.emit('db.get_blinded_balances', data.result)
+            break;
 
             default:
                 //log.info("Unkown event coming")
                 
                 // This may be a subscription
                 if(data.method === 'notice') {
-                    
                     let id = data.params[0]
 
                     // Emit event if subscription key found
                     if(this.subscription_ids.has(id)) {
                         this.emit(
-                            "db.subscribe_to_market." + this.subscription_ids.get(id),
+                            this.subscription_ids.get(id),
                             data.params[1]
                         )
                         return

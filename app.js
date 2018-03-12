@@ -154,12 +154,12 @@ api.on("open", () => {
         //log.warn(await api.database_api.get_collateral_bids('1.3.0', 1000, 0))
 
         // Subscribe to a bts:cny market
-        // let subscription_id = await api.database_api.subscribe_to_market('1.3.0', '1.3.113')
-        // api.on(subscription_id, data => {
+        // let market_subscription_id = await database.subscribe_to_market('1.3.0', '1.3.113')
+        // database.on(market_subscription_id, async data => {
         //     log.warn(data);
             
         //     // Now unsubscribe from bts:cny market
-        //     api.database_api.unsubscribe_from_market('1.3.0', '1.3.113')
+        //     await database.unsubscribe_from_market('1.3.0', '1.3.113')
         // })
 
         // Get 24 hour volume of an asset pair by symbol names
@@ -237,13 +237,13 @@ api.on("open", () => {
         //api.close()
 
 
-        let trx = await database.get_transaction(24614807, 1)
+        //let trx = await database.get_transaction(24614807, 1)
         
         // Get a hexdump for transaction
         //log.warn(await database.get_transaction_hex(trx))
 
         // Get potential public keys for transaction
-        let signatures = await database.get_potential_signatures(trx)
+        //let signatures = await database.get_potential_signatures(trx)
     // Wut this do?
     //log.warn(await database.get_required_signatures(trx, signatures))
         
@@ -257,6 +257,19 @@ api.on("open", () => {
     //log.warn(await database.validate_transaction(trx))
         
         //log.warn(await database.verify_account_authority(process.env.DEX_USER_ID, signatures))
+
+        // Get proposed transactions for an account
+        //log.warn(await database.get_proposed_transactions(process.env.DEX_USER_ID))
+
+        // Subscribe to... whatever this is
+        // let subscription_id = await database.set_subscribe_callback(true)
+        
+        // database.on(subscription_id, async data => {
+        //     log.error(data)
+
+        //     // Unsubscribe
+        //     await database.cancel_all_subscriptions()
+        // })
     })
 })
 let x = false
